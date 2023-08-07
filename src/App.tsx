@@ -27,10 +27,7 @@ function App() {
       getOpenTabs().then(
         (openTabs) => {
           setTabs(openTabs);
-
-          if (filteredTabs.length === 0) {
-            setFilteredTabs(openTabs);
-          }
+          setFilteredTabs(openTabs);
         },
         () => {}
       );
@@ -46,14 +43,22 @@ function App() {
     });
 
     setLoading(false);
-  }, [filteredTabs.length]);
+  }, []);
+
+  useEffect(() => {
+    if (filteredTabs.length === 0 && searchString === "") {
+      setFilteredTabs(tabs);
+    }
+  }, [filteredTabs.length, searchString, tabs]);
 
   const handleSearch = (e: any) => {
     setSearchString(e.target.value);
 
     if (e.target.value) {
-      const newTabs = tabs.filter((tab) =>
-        tab.title.toLowerCase().includes(e.target.value.toLowerCase())
+      const newTabs = tabs.filter(
+        (tab) =>
+          tab.title.toLowerCase().includes(e.target.value.toLowerCase()) ||
+          tab.url.toLowerCase().includes(e.target.value.toLowerCase())
       );
       setFilteredTabs(newTabs);
     } else {
@@ -64,6 +69,7 @@ function App() {
   const clearOpenTabs = (e: React.MouseEvent) => {
     e.preventDefault();
     archiveOpenTabs();
+    setFilteredTabs([]);
   };
 
   const clearArchivedTabs = (e: React.MouseEvent) => {

@@ -44,9 +44,9 @@ const UrlList: React.FC<IUrlListProps> = ({
             key={tab.id}
             style={{
               display: "flex",
-              gap: 15,
+              gap: 10,
               margin: "10px 0",
-              padding: 20,
+              padding: 15,
               flexDirection: "column",
             }}
           >
@@ -62,8 +62,11 @@ const UrlList: React.FC<IUrlListProps> = ({
                 {tab.title}
               </div>
             </a>
+            <p style={{ margin: "-10px 0 0 35px", fontSize: 14 }}>
+              {tab.url}
+            </p>
             <p style={{ margin: "0 35px", fontStyle: "italic", fontSize: 14 }}>
-              open on {dayjs(tab.timeStamp).format("DD-MMM-YYYY HH:mm:ss")}
+              opened on {dayjs(tab.timeStamp).format("DD-MMM-YYYY HH:mm:ss")}
               {!!tab.device ? <span> from {tab.device}</span> : ""}
             </p>
           </article>
