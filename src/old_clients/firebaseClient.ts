@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FirebaseOptions, initializeApp } from "firebase/app";
 import {
   getDatabase,
@@ -12,6 +13,8 @@ import {
   remove,
   orderByChild,
 } from "firebase/database";
+
+import { ITab } from "../interfaces/iTab";
 
 const clientCredentials: FirebaseOptions = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -80,12 +83,4 @@ export const removeArchivedTabs = () => {
   remove(ref(database, "archived"));
 };
 
-export interface ITab {
-  id: string;
-  title: string;
-  url: string;
-  favIconUrl: string;
-  index: number;
-  timeStamp: string;
-  device: string;
-}
+

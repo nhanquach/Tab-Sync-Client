@@ -1,78 +1,135 @@
 import React from "react";
-import { ITab } from "../clientApp";
 import dayjs from "dayjs";
+// @ts-ignore
+import groupBy from "lodash.groupby";
+
+import { ITab } from "../interfaces/iTab";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Link,
+} from "@mui/material";
+import { PhonelinkTwoTone } from "@mui/icons-material";
 
 interface IUrlListProps {
-  header: string;
-  onClear: (e: React.MouseEvent) => void;
+  onClear: (deviceName: string) => void;
+  onRefresh: (e: React.MouseEvent) => void;
   urls: ITab[];
-  isLoading: boolean;
 }
 
-const UrlList: React.FC<IUrlListProps> = ({
-  header,
-  onClear,
-  urls,
-  isLoading,
-}) => {
+const UrlList: React.FC<IUrlListProps> = ({ onClear, onRefresh, urls }) => {
+  const groupByBrowser = groupBy(urls, "deviceName");
+  const browsers = Object.keys(groupByBrowser);
+
+  if (urls.length === 0) {
+    return (
+      <Box
+        mt={8}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <PhonelinkTwoTone sx={{ fontSize: 100, color: "#d3d3d3" }} />
+        <p>
+          No tab was found, continue browsing from your computers or phones.
+        </p>
+        <p>Your open tabs will be shown here.</p>
+        <hr />
+        <p>Still can see your tabs? Check if you are signed out.</p>
+      </Box>
+    );
+  }
+
   return (
-    <div className="container" style={{ marginBottom: 40 }}>
-      <nav>
-        <ul>
-          <li>
-            <h5 style={{ margin: 0 }}>{header}</h5>
-          </li>
-        </ul>
-        <ul>
-          <li>
-            <button
-              className="outline"
-              onClick={onClear}
-              style={{ border: 0, padding: "0 10px" }}
-              disabled={urls.length === 0}
-            >
-              Clear
-            </button>
-          </li>
-        </ul>
-      </nav>
-      {isLoading && <p>Loading...</p>}
-      {urls.length === 0 && <p>No Open tab</p>}
-      {urls.map((tab) => {
+    <Box my={2}>
+      {browsers.map((name) => {
+        const tabs = groupByBrowser[name];
         return (
-          <article
-            key={tab.id}
-            style={{
-              display: "flex",
-              gap: 10,
-              margin: "10px 0",
-              padding: 15,
-              flexDirection: "column",
-            }}
-          >
-            <a href={tab.url} target="_blank" rel="noreferrer">
-              <div
-                style={{
-                  display: "flex",
-                  gap: 15,
-                  alignItems: "center",
-                }}
-              >
-                <img src={tab.favIconUrl} height={20} width={20} alt="" />
-                {tab.title}
-              </div>
-            </a>
-            <p style={{ margin: "-10px 0 0 35px", fontSize: 14 }}>
-              {tab.url}
-            </p>
-            <p style={{ margin: "0 35px", fontStyle: "italic", fontSize: 14 }}>
-              opened on {dayjs(tab.timeStamp).format("DD-MMM-YYYY HH:mm:ss")}
-              {!!tab.device ? <span> from {tab.device}</span> : ""}
-            </p>
-          </article>
+          <Card key={name} variant="outlined" sx={{ mb: 2 }}>
+            <CardHeader
+              title={name || "Unknown ¯\\_(ツ)_/¯ "}
+              action={
+                <Box mt={1}>
+                  <Button
+                    className="outline"
+                    onClick={() => onClear(name)}
+                    style={{ border: 0, padding: "0 10px" }}
+                    disabled={urls.length === 0}
+                  >
+                    Clear
+                  </Button>
+                  <Button
+                    className="outline"
+                    onClick={onRefresh}
+                    style={{ border: 0, padding: "0 10px" }}
+                  >
+                    Refresh
+                  </Button>
+                </Box>
+              }
+            />
+            <CardContent>
+              {tabs.map((tab: ITab) => {
+                return (
+                  <Box
+                    key={tab.id}
+                    display="flex"
+                    alignItems="flex-start"
+                    gap={2}
+                  >
+                    <img
+                      src={tab.favIconUrl}
+                      height={30}
+                      width={30}
+                      alt="favicon"
+                    />
+
+                    <Box display="flex" flexDirection="column" gap={1}>
+                      <Link
+                        underline="hover"
+                        color="inherit"
+                        href={tab.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        fontWeight={700}
+                      >
+                        {tab.title}
+                      </Link>
+
+                      <div
+                        style={{
+                          fontSize: 14,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          lineClamp: 1,
+                        }}
+                      >
+                        {tab.url}
+                      </div>
+                      <div
+                        style={{
+                          fontStyle: "italic",
+                          fontSize: 14,
+                        }}
+                      >
+                        opened on{" "}
+                        {dayjs(tab.timeStamp).format("DD-MMM-YYYY HH:mm:ss")}
+                      </div>
+                      <hr />
+                    </Box>
+                  </Box>
+                );
+              })}
+            </CardContent>
+          </Card>
         );
       })}
-    </div>
+    </Box>
   );
 };
 

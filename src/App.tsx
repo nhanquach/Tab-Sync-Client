@@ -1,111 +1,130 @@
 import React, { useEffect, useState } from "react";
-
-import "./App.css";
 import {
-  ITab,
-  getArchivedTabs,
-  getOpenTabs,
-  onArchivedTabChange,
-  onOpenTabChange,
-  archiveOpenTabs,
-  removeArchivedTabs,
-} from "./clientApp";
+  AppBar,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { User } from "@supabase/supabase-js";
 
-import "@picocss/pico";
-import UrlList from "./components/UrlList";
+import { getUser, signUp, signIn } from "./clients";
+import { signOut } from "./clients/supabaseClient";
+
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+
+import { VIEWS } from "./routes";
+import Home from "./pages/Home";
+import { CloudSyncTwoTone, ExitToAppTwoTone } from "@mui/icons-material";
 
 function App() {
-  const [loading, setLoading] = useState(true);
-  const [tabs, setTabs] = useState<Array<ITab>>([]);
-  const [filteredTabs, setFilteredTabs] = useState<Array<ITab>>([]);
-  const [archivedTabs, setArchivedTabs] = useState<Array<ITab>>([]);
+  const [view, setView] = useState<VIEWS>(VIEWS.SIGN_IN);
 
-  const [searchString, setSearchString] = useState();
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
-    onOpenTabChange(() => {
-      getOpenTabs().then(
-        (openTabs) => {
-          setTabs(openTabs);
-          setFilteredTabs(openTabs);
-        },
-        () => {}
-      );
+    getUser().then((userData) => {
+      if (userData) {
+        setView(VIEWS.HOME);
+        setUser(userData);
+      }
     });
-
-    onArchivedTabChange(() => {
-      getArchivedTabs().then(
-        (archived) => {
-          setArchivedTabs(archived);
-        },
-        () => {}
-      );
-    });
-
-    setLoading(false);
   }, []);
 
-  useEffect(() => {
-    if (filteredTabs.length === 0 && searchString === "") {
-      setFilteredTabs(tabs);
-    }
-  }, [filteredTabs.length, searchString, tabs]);
+  const onSignUp = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    const { data, error } = await signUp({
+      email,
+      password,
+    });
 
-  const handleSearch = (e: any) => {
-    setSearchString(e.target.value);
-
-    if (e.target.value) {
-      const newTabs = tabs.filter(
-        (tab) =>
-          tab.title.toLowerCase().includes(e.target.value.toLowerCase()) ||
-          tab.url.toLowerCase().includes(e.target.value.toLowerCase())
-      );
-      setFilteredTabs(newTabs);
-    } else {
-      setFilteredTabs(tabs);
-    }
+    return {
+      data,
+      error: error?.message || "",
+    };
   };
 
-  const clearOpenTabs = (e: React.MouseEvent) => {
-    e.preventDefault();
-    archiveOpenTabs();
-    setFilteredTabs([]);
+  const onSignIn = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<{ error: string }> => {
+    // TODO: encrypt password first!
+    const { error, data } = await signIn({
+      email,
+      password,
+    });
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    setUser(data.user);
+    setView(VIEWS.HOME);
+
+    return {
+      error: "",
+    };
   };
 
-  const clearArchivedTabs = (e: React.MouseEvent) => {
-    e.preventDefault();
-    removeArchivedTabs();
+  const onSignOut = async () => {
+    signOut();
+    setView(VIEWS.SIGN_IN);
   };
 
   return (
-    <div>
-      <nav className="container-fluid" style={{ alignItems: "center" }}>
-        <h1 style={{ margin: "10px 0" }}>Tab Sync</h1>
-      </nav>
+    <>
+      <Box sx={{ flexGrow: 1, mb: 10 }}>
+        <AppBar
+          position="fixed"
+          color="transparent"
+          elevation={1}
+          sx={{
+            backdropFilter: "blur(6px)",
+          }}
+        >
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="logo"
+            >
+              <CloudSyncTwoTone sx={{ fontSize: 40 }} />
+            </IconButton>
+            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+              Tab Sync
+            </Typography>
+            {user && (
+              <Button variant="outlined" onClick={onSignOut}>
+                <ExitToAppTwoTone sx={{ mr: 1 }} /> Sign out
+              </Button>
+            )}
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <Container sx={{ padding: "5px" }}>
+        {view === VIEWS.SIGN_IN && (
+          <SignIn signIn={onSignIn} setView={setView} />
+        )}
 
-      <div className="container">
-        <input
-          type="text"
-          placeholder="search..."
-          value={searchString}
-          onChange={handleSearch}
-        />
-      </div>
+        {view === VIEWS.SIGN_UP && (
+          <SignUp signUp={onSignUp} setView={setView} />
+        )}
 
-      <UrlList
-        urls={filteredTabs}
-        onClear={clearOpenTabs}
-        header="Open Tabs"
-        isLoading={loading}
-      />
-
-      <UrlList
-        urls={archivedTabs}
-        onClear={clearArchivedTabs}
-        header="Archived Tabs"
-        isLoading={loading}
-      />
-    </div>
+        {view === VIEWS.HOME && <Home />}
+      </Container>
+    </>
   );
 }
 
