@@ -8,6 +8,9 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import { User } from "@supabase/supabase-js";
 
 import { getUser, signUp, signIn } from "./clients";
@@ -82,15 +85,28 @@ function App() {
     setView(VIEWS.SIGN_IN);
   };
 
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? "dark" : "light",
+        },
+      }),
+    [prefersDarkMode]
+  );
+
   return (
-    <>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Box sx={{ flexGrow: 1, mb: 10 }}>
         <AppBar
           position="fixed"
           color="transparent"
           elevation={1}
           sx={{
-            backdropFilter: "blur(6px)",
+            backdropFilter: "blur(8px)",
           }}
         >
           <Toolbar>
@@ -107,7 +123,15 @@ function App() {
             </Typography>
             {user && (
               <Button variant="outlined" onClick={onSignOut}>
-                <ExitToAppTwoTone sx={{ mr: 1 }} /> Sign out
+                <ExitToAppTwoTone />
+                <Typography
+                  sx={{
+                    display: { xs: "none", sm: "inline" },
+                    ml: { xs: 0, sm: 2 },
+                  }}
+                >
+                  Sign out
+                </Typography>
               </Button>
             )}
           </Toolbar>
@@ -124,7 +148,7 @@ function App() {
 
         {view === VIEWS.HOME && <Home />}
       </Container>
-    </>
+    </ThemeProvider>
   );
 }
 

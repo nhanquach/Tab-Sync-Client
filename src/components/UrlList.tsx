@@ -50,7 +50,11 @@ const UrlList: React.FC<IUrlListProps> = ({ onClear, onRefresh, urls }) => {
       {browsers.map((name) => {
         const tabs = groupByBrowser[name];
         return (
-          <Card key={name} variant="outlined" sx={{ mb: 2 }}>
+          <Card
+            key={name}
+            variant="outlined"
+            sx={{ mb: 2, wordBreak: "break-word" }}
+          >
             <CardHeader
               title={name || "Unknown ¯\\_(ツ)_/¯ "}
               action={
@@ -86,10 +90,16 @@ const UrlList: React.FC<IUrlListProps> = ({ onClear, onRefresh, urls }) => {
                       src={tab.favIconUrl}
                       height={30}
                       width={30}
+                      style={{ minWidth: 30 }}
                       alt="favicon"
                     />
-
-                    <Box display="flex" flexDirection="column" gap={1}>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      gap={1}
+                      flex={1}
+                      minWidth={0}
+                    >
                       <Link
                         underline="hover"
                         color="inherit"
@@ -100,17 +110,23 @@ const UrlList: React.FC<IUrlListProps> = ({ onClear, onRefresh, urls }) => {
                       >
                         {tab.title}
                       </Link>
-
-                      <div
-                        style={{
-                          fontSize: 14,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          lineClamp: 1,
+                      <Box
+                        sx={{
+                          flex: 1,
                         }}
                       >
-                        {tab.url}
-                      </div>
+                        <p
+                          style={{
+                            width: "100%",
+                            fontSize: 14,
+                            textOverflow: "ellipsis",
+                            overflow: "auto",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {tab.url}
+                        </p>
+                      </Box>
                       <div
                         style={{
                           fontStyle: "italic",
