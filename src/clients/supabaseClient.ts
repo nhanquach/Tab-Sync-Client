@@ -259,6 +259,7 @@ export const onOpenTabChange = async (
           filter: `userId=eq.${userId}`,
         },
         (payload) => {
+          console.log("🚀 . payload:", payload);
           callback(payload as unknown as IDatabaseUpdatePayload);
         }
       )

@@ -40,7 +40,7 @@ const UrlList: React.FC<IUrlListProps> = ({ onClear, onRefresh, urls }) => {
         </p>
         <p>Your open tabs will be shown here.</p>
         <hr />
-        <p>Still can see your tabs? Check if you are signed out.</p>
+        <p>Still can't see your tabs? Check if you are signed out.</p>
       </Box>
     );
   }
@@ -113,19 +113,13 @@ const UrlList: React.FC<IUrlListProps> = ({ onClear, onRefresh, urls }) => {
                       <Box
                         sx={{
                           flex: 1,
+                          width: "100%",
+                          fontSize: 14,
+                          overflow: "auto",
+                          whiteSpace: "nowrap",
                         }}
                       >
-                        <p
-                          style={{
-                            width: "100%",
-                            fontSize: 14,
-                            textOverflow: "ellipsis",
-                            overflow: "auto",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {tab.url}
-                        </p>
+                        {tab.url}
                       </Box>
                       <div
                         style={{

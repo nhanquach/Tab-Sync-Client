@@ -16,6 +16,13 @@ import {
   Box,
   CircularProgress,
   Container,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Paper,
   TextField,
   Typography,
@@ -27,8 +34,9 @@ import {
 } from "@mui/icons-material";
 import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
 import { sortByTimeStamp } from "../utils/sortByTimeStamp";
+import QRCode from "../components/QRCode";
 
-function Home() {
+const Home = () => {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<IView>("open_tabs");
 
@@ -83,8 +91,14 @@ function Home() {
     onOpenTabChange((payload: IDatabaseUpdatePayload) => {
       if (payload.eventType === "UPDATE") {
         setTabs((currentTabs) => {
-          if (currentTabs.some((t) => t.id === payload.new.id)) {
-            return currentTabs;
+          const index = currentTabs.findIndex(
+            (tab) => tab.id === payload.new.id
+          );
+
+          if (index > -1) {
+            const newTabs = [...currentTabs];
+            newTabs.splice(index, 1, payload.new);
+            return newTabs;
           }
 
           return [payload.new, ...currentTabs];
@@ -104,8 +118,14 @@ function Home() {
     onArchivedTabChange((payload: IDatabaseUpdatePayload) => {
       if (payload.eventType === "UPDATE") {
         setArchivedTabs((currentTabs) => {
-          if (currentTabs.some((t) => t.id === payload.new.id)) {
-            return currentTabs;
+          const index = currentTabs.findIndex(
+            (tab) => tab.id === payload.new.id
+          );
+
+          if (index > -1) {
+            const newTabs = [...currentTabs];
+            newTabs.splice(index, 1, payload.new);
+            return newTabs;
           }
 
           return [payload.new, ...currentTabs];
@@ -161,8 +181,70 @@ function Home() {
     return isOpenTabsView ? tabs : archivedTabs;
   }, [searchString, isOpenTabsView, tabs, archivedTabs, filteredTabs]);
 
+  const drawerWidth = 240;
+
+  const drawer = (
+    <Box pt={8}>
+      <List>
+        <ListItemButton
+          sx={{ mb: 2 }}
+          selected={view === "open_tabs"}
+          onClick={() => setView("open_tabs")}
+        >
+          <ListItemIcon>
+            <CloudSyncTwoTone sx={{ fontSize: 30 }} />
+          </ListItemIcon>
+          <ListItemText primary="Open tabs" />
+        </ListItemButton>
+        <ListItemButton
+          sx={{ mb: 2 }}
+          selected={view === "archived_tabs"}
+          onClick={() => setView("archived_tabs")}
+        >
+          <ListItemIcon>
+            <ArchiveTwoTone sx={{ fontSize: 30 }} />
+          </ListItemIcon>
+          <ListItemText primary="Archived tabs" />
+        </ListItemButton>
+        <Divider sx={{ pt: 6 }} />
+        <ListItem>
+          <ListItemIcon
+            style={{ maxWidth: "100%" }}
+            sx={{
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <QRCode />
+          </ListItemIcon>
+        </ListItem>
+      </List>
+    </Box>
+  );
+
   return (
-    <Container sx={{ mb: 8 }} maxWidth="md">
+    <>
+      <Box
+        component="nav"
+        sx={{
+          width: { md: drawerWidth },
+          flexShrink: { md: 0 },
+        }}
+      >
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", md: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+
       <TextField
         type="text"
         placeholder="search..."
@@ -207,11 +289,13 @@ function Home() {
         />
       )}
 
-      <LightbulbCircleTwoTone
-        fontSize="large"
-        sx={{ display: "flex", width: "100%", my: 2 }}
-        color="info"
-      />
+      {!loading && (
+        <LightbulbCircleTwoTone
+          fontSize="large"
+          sx={{ display: "flex", width: "100%", my: 2 }}
+          color="primary"
+        />
+      )}
 
       {!isOpenTabsView && !loading && (
         <Typography textAlign="center" color="#696969">
@@ -235,9 +319,22 @@ function Home() {
       )}
 
       <Paper
-        sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: { md: "none" },
+        }}
         elevation={3}
+        className="bottom-navigation"
       >
+        <ul className="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
         <BottomNavigation
           showLabels
           value={view}
@@ -257,8 +354,8 @@ function Home() {
           />
         </BottomNavigation>
       </Paper>
-    </Container>
+    </>
   );
-}
+};
 
 export default Home;

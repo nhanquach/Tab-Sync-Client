@@ -4,6 +4,10 @@ import {
   Box,
   Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Toolbar,
   Typography,
@@ -21,9 +25,18 @@ import SignUp from "./pages/SignUp";
 
 import { VIEWS } from "./routes";
 import Home from "./pages/Home";
-import { CloudSyncTwoTone, ExitToAppTwoTone } from "@mui/icons-material";
+import {
+  CloudSyncTwoTone,
+  ExitToAppTwoTone,
+  QrCode2TwoTone,
+} from "@mui/icons-material";
+import QRCode from "./components/QRCode";
+
+const drawerWidth = 240;
 
 function App() {
+  const [showModal, setShowModal] = useState(false);
+
   const [view, setView] = useState<VIEWS>(VIEWS.SIGN_IN);
 
   const [user, setUser] = useState<User>();
@@ -85,6 +98,10 @@ function App() {
     setView(VIEWS.SIGN_IN);
   };
 
+  const showQRCode = () => {
+    setShowModal(!showModal);
+  };
+
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   const theme = React.useMemo(
@@ -92,6 +109,13 @@ function App() {
       createTheme({
         palette: {
           mode: prefersDarkMode ? "dark" : "light",
+          primary: {
+            main: "#8f94fb",
+            dark: "#4e54c8",
+          },
+          secondary: {
+            main: "#696969",
+          },
         },
       }),
     [prefersDarkMode]
@@ -99,55 +123,113 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box sx={{ flexGrow: 1, mb: 10 }}>
-        <AppBar
-          position="fixed"
-          color="transparent"
-          elevation={1}
-          sx={{
-            backdropFilter: "blur(8px)",
-          }}
-        >
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="logo"
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        {view === VIEWS.HOME && (
+          <Box sx={{ flexGrow: 1, mb: 10 }}>
+            <AppBar
+              position="fixed"
+              color="transparent"
+              elevation={0}
+              sx={{
+                backdropFilter: "blur(8px)",
+                width:
+                  view === VIEWS.HOME
+                    ? { md: `calc(100% - ${drawerWidth}px)` }
+                    : {},
+                ml: view === VIEWS.HOME ? { md: `${drawerWidth}px` } : {},
+              }}
             >
-              <CloudSyncTwoTone sx={{ fontSize: 40 }} />
-            </IconButton>
-            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-              Tab Sync
-            </Typography>
-            {user && (
-              <Button variant="outlined" onClick={onSignOut}>
-                <ExitToAppTwoTone />
-                <Typography
-                  sx={{
-                    display: { xs: "none", sm: "inline" },
-                    ml: { xs: 0, sm: 2 },
-                  }}
+              <Toolbar>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="logo"
                 >
-                  Sign out
+                  <CloudSyncTwoTone sx={{ fontSize: 40 }} />
+                </IconButton>
+                <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+                  Tab Sync
                 </Typography>
-              </Button>
+                <Button onClick={showQRCode}>
+                  <QrCode2TwoTone />
+                </Button>
+                {user && (
+                  <Button variant="outlined" onClick={onSignOut} sx={{ ml: 1 }}>
+                    <ExitToAppTwoTone />
+                    <Typography
+                      sx={{
+                        display: { xs: "none", md: "inline" },
+                        ml: { xs: 0, sm: 2 },
+                      }}
+                    >
+                      Sign out
+                    </Typography>
+                  </Button>
+                )}
+              </Toolbar>
+            </AppBar>
+          </Box>
+        )}
+        <div className="area">
+          {view !== VIEWS.HOME && (
+            <ul className="circles">
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+            </ul>
+          )}
+          <Container
+            sx={{
+              flexGrow: 1,
+              p: 3,
+              mt: 6,
+              width:
+                view === VIEWS.HOME
+                  ? { sm: `calc(100% - ${drawerWidth}px)` }
+                  : "100%",
+              pl: view === VIEWS.HOME ? { md: `${drawerWidth}px` } : {},
+            }}
+            component="main"
+          >
+            {view === VIEWS.SIGN_IN && (
+              <SignIn signIn={onSignIn} setView={setView} />
             )}
-          </Toolbar>
-        </AppBar>
+
+            {view === VIEWS.SIGN_UP && (
+              <SignUp signUp={onSignUp} setView={setView} />
+            )}
+
+            {view === VIEWS.HOME && (
+              <Box pb={8}>
+                <Home />
+              </Box>
+            )}
+
+            <Dialog keepMounted open={showModal} onClose={showQRCode}>
+              <DialogTitle bgcolor={theme.palette.primary.main}>
+                <Typography variant="h6" textAlign="center">
+                  {window.location.href}
+                </Typography>
+              </DialogTitle>
+              <DialogContent>
+                <QRCode />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={showQRCode}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </Container>
+        </div>
       </Box>
-      <Container sx={{ padding: "5px" }}>
-        {view === VIEWS.SIGN_IN && (
-          <SignIn signIn={onSignIn} setView={setView} />
-        )}
-
-        {view === VIEWS.SIGN_UP && (
-          <SignUp signUp={onSignUp} setView={setView} />
-        )}
-
-        {view === VIEWS.HOME && <Home />}
-      </Container>
     </ThemeProvider>
   );
 }
