@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { VIEWS } from "../routes";
-import { CloudSyncTwoTone } from "@mui/icons-material";
+import Logo from "../components/Logo";
 
 interface ISignInProps {
   signIn: ({
@@ -44,7 +44,7 @@ const SignIn: React.FC<ISignInProps> = ({ signIn, setView }) => {
       <Card sx={{ backdropFilter: "blur(8px)", background: "none" }} elevation={0}>
         <CardContent>
           <Typography variant="h4" display="flex" gap={2} mb={2}>
-            <CloudSyncTwoTone sx={{ fontSize: 40 }} />
+            <Logo />
             Tab Sync
           </Typography>
           <form onSubmit={onSignIn} action="none">

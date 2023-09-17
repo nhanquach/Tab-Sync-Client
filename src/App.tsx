@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  AppBar,
   Box,
   Button,
   Container,
@@ -8,8 +7,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
-  Toolbar,
   Typography,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -25,14 +22,10 @@ import SignUp from "./pages/SignUp";
 
 import { VIEWS } from "./routes";
 import Home from "./pages/Home";
-import {
-  CloudSyncTwoTone,
-  ExitToAppTwoTone,
-  QrCode2TwoTone,
-} from "@mui/icons-material";
 import QRCode from "./components/QRCode";
-
-const drawerWidth = 240;
+import HomeAppBar from "./components/HomeAppBar";
+import LiveBackground from "./components/LiveBackground";
+import { drawerWidth } from "./utils/dimensions";
 
 function App() {
   const [showModal, setShowModal] = useState(false);
@@ -126,67 +119,14 @@ function App() {
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         {view === VIEWS.HOME && (
-          <Box sx={{ flexGrow: 1, mb: 10 }}>
-            <AppBar
-              position="fixed"
-              color="transparent"
-              elevation={0}
-              sx={{
-                backdropFilter: "blur(8px)",
-                width:
-                  view === VIEWS.HOME
-                    ? { md: `calc(100% - ${drawerWidth}px)` }
-                    : {},
-                ml: view === VIEWS.HOME ? { md: `${drawerWidth}px` } : {},
-              }}
-            >
-              <Toolbar>
-                <IconButton
-                  size="large"
-                  edge="start"
-                  color="inherit"
-                  aria-label="logo"
-                >
-                  <CloudSyncTwoTone sx={{ fontSize: 40 }} />
-                </IconButton>
-                <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-                  Tab Sync
-                </Typography>
-                <Button onClick={showQRCode}>
-                  <QrCode2TwoTone />
-                </Button>
-                {user && (
-                  <Button variant="outlined" onClick={onSignOut} sx={{ ml: 1 }}>
-                    <ExitToAppTwoTone />
-                    <Typography
-                      sx={{
-                        display: { xs: "none", md: "inline" },
-                        ml: { xs: 0, sm: 2 },
-                      }}
-                    >
-                      Sign out
-                    </Typography>
-                  </Button>
-                )}
-              </Toolbar>
-            </AppBar>
-          </Box>
+          <HomeAppBar
+            user={user}
+            onSignOut={onSignOut}
+            toggleQRCode={showQRCode}
+          />
         )}
         <div className="area">
-          {view !== VIEWS.HOME && (
-            <ul className="circles">
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-            </ul>
-          )}
+          {view !== VIEWS.HOME && <LiveBackground />}
           <Container
             sx={{
               flexGrow: 1,
@@ -213,22 +153,23 @@ function App() {
                 <Home />
               </Box>
             )}
-
-            <Dialog keepMounted open={showModal} onClose={showQRCode}>
-              <DialogTitle bgcolor={theme.palette.primary.main}>
-                <Typography variant="h6" textAlign="center">
-                  {window.location.href}
-                </Typography>
-              </DialogTitle>
-              <DialogContent>
-                <QRCode />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={showQRCode}>Close</Button>
-              </DialogActions>
-            </Dialog>
           </Container>
         </div>
+        <Dialog keepMounted open={showModal} onClose={showQRCode}>
+          <DialogTitle bgcolor={theme.palette.primary.main}>
+            <Typography variant="h6" textAlign="center">
+              {window.location.href}
+            </Typography>
+          </DialogTitle>
+          <DialogContent>
+            <Box display="flex">
+              <QRCode />
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={showQRCode}>Close</Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </ThemeProvider>
   );

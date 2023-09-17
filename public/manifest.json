@@ -1,6 +1,6 @@
 {
   "short_name": "Tab Sync",
-  "name": "Tab Sync - Sync Accross Devices",
+  "name": "Tab Sync - Your Tabs Accross Devices",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,8 +18,16 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "share_target": {
+    "action": "/share",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#8f94fb",
   "background_color": "#ddd"
 }

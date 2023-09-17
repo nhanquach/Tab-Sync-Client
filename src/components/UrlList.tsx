@@ -130,7 +130,7 @@ const UrlList: React.FC<IUrlListProps> = ({ onClear, onRefresh, urls }) => {
                         opened on{" "}
                         {dayjs(tab.timeStamp).format("DD-MMM-YYYY HH:mm:ss")}
                       </div>
-                      <hr />
+                      <Box my={1} />
                     </Box>
                   </Box>
                 );
