@@ -49,9 +49,6 @@ const SignIn: React.FC<ISignInProps> = ({ signIn, setView }) => {
           </Typography>
           <form onSubmit={onSignIn} action="none">
             <Typography variant="h5">Sign in</Typography>
-            <Typography color="#696969">
-              We only use your account in order to save your tabs.
-            </Typography>
             <TextField
               variant="outlined"
               fullWidth

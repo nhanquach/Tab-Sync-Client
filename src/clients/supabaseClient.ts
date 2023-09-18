@@ -259,7 +259,6 @@ export const onOpenTabChange = async (
           filter: `userId=eq.${userId}`,
         },
         (payload) => {
-          console.log("🚀 . payload:", payload);
           callback(payload as unknown as IDatabaseUpdatePayload);
         }
       )
@@ -308,6 +307,17 @@ export const removeArchivedTabs = async (deviceName?: string) => {
 
   const tabIds = archivedTabs.data.map<number>((t) => t.id);
   await removeTab(tabIds, TABLES.ARCHIVED_TABS);
+};
+
+export const sendFeedback = async (type: string, description: string) => {
+  const { client, userId } = await getClient();
+  if (!userId) {
+    return { error: { message: "No user id" } };
+  }
+
+  if (client) {
+    await client.from("feedback").insert([{ type, description }]);
+  }
 };
 
 const checkTokenExpired = async () => {
