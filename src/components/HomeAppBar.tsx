@@ -85,27 +85,29 @@ const HomeAppBar: React.FC<IHomeAppBarProps> = ({
             Tab Sync
           </Typography>
           <Box display="flex" gap={1}>
-            <Button onClick={toggleQRCode}>
+            <Button sx={{ minWidth: { xs: 32, md: 64 } }} onClick={toggleQRCode}>
               <QrCode2TwoTone />
             </Button>
-            <Button onClick={handleOpenFeedback}>
+            <Button sx={{ minWidth: { xs: 32, md: 64 } }} onClick={handleOpenFeedback}>
               <FeedbackTwoTone />
               <Typography
                 sx={{
                   display: { xs: "none", md: "inline" },
-                  ml: { xs: 0, sm: 1 },
                 }}
               >
                 Feedback
               </Typography>
             </Button>
             {user && (
-              <Button variant="outlined" onClick={onSignOut}>
+              <Button
+                sx={{ minWidth: { xs: 32, md: 64 } }}
+                variant="outlined"
+                onClick={onSignOut}
+              >
                 <ExitToAppTwoTone />
                 <Typography
                   sx={{
                     display: { xs: "none", md: "inline" },
-                    ml: { xs: 0, sm: 1 },
                   }}
                 >
                   Sign out
