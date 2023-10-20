@@ -17,35 +17,87 @@ import {
   CircularProgress,
   Divider,
   Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Menu,
+  MenuItem,
+  MenuList,
   Paper,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import {
   ArchiveTwoTone,
+  CheckTwoTone,
   CloudSyncTwoTone,
+  DevicesTwoTone,
+  Grid3x3TwoTone,
   LightbulbCircleTwoTone,
+  ListAltTwoTone,
+  RefreshTwoTone,
 } from "@mui/icons-material";
 import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
 import { sortByTimeStamp } from "../utils/sortByTimeStamp";
 import QRCode from "../components/QRCode";
+import UrlGrid from "../components/UrlGrid";
+
+const drawerWidth = 240;
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<IView>("open_tabs");
 
   const [tabs, setTabs] = useState<ITab[]>([]);
-  const [filteredTabs, setFilteredTabs] = useState<ITab[]>([]);
   const [archivedTabs, setArchivedTabs] = useState<ITab[]>([]);
 
-  const [searchString, setSearchString] = useState();
+  const [searchString, setSearchString] = useState<string>();
+  const [filters, setFilters] = useState<string[]>([]);
+
+  const [layout, setLayout] = useState<"grid" | "list">("grid");
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   const isOpenTabsView = view === "open_tabs";
+
+  const browsers = useMemo(() => {
+    const devices = Array.from(new Set(tabs.map((url) => url.deviceName)));
+    return devices;
+  }, [tabs]);
+
+  const urls = useMemo(() => {
+    let displayedTabs = isOpenTabsView ? tabs : archivedTabs;
+
+    // apply filters if any
+    if (filters.length > 0) {
+      displayedTabs = displayedTabs.filter((tab) =>
+        filters.includes(tab.deviceName)
+      );
+    }
+
+    // apply search string if any
+    if (searchString) {
+      displayedTabs = displayedTabs.filter(
+        (tab) =>
+          tab.title.toLowerCase().includes(searchString.toLowerCase()) ||
+          tab.url.toLowerCase().includes(searchString.toLowerCase())
+      );
+    }
+
+    return displayedTabs.sort(sortByTimeStamp);
+  }, [isOpenTabsView, tabs, archivedTabs, filters, searchString]);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleGetOpenTabs = async () => {
     setLoading(true);
@@ -58,7 +110,6 @@ const Home = () => {
     }
 
     setTabs(newTabs.sort(sortByTimeStamp));
-    setFilteredTabs(newTabs.sort(sortByTimeStamp));
     setLoading(false);
   };
 
@@ -74,6 +125,10 @@ const Home = () => {
 
     setArchivedTabs(newTabs.sort(sortByTimeStamp));
     setLoading(false);
+  };
+
+  const toggleLayout = () => {
+    setLayout((currentLayout) => (currentLayout === "grid" ? "list" : "grid"));
   };
 
   // Get Open Tabs and Archived Tabs based on View
@@ -139,48 +194,39 @@ const Home = () => {
     });
   }, [archivedTabs]);
 
+  // Select all devices as filters
   useEffect(() => {
-    if (filteredTabs.length === 0 && searchString === "") {
-      setFilteredTabs(tabs);
-    }
-  }, [filteredTabs.length, searchString, tabs]);
+    const devices = Array.from(new Set(tabs.map((url) => url.deviceName)));
+    setFilters(devices);
+  }, [tabs]);
 
   const handleSearch = (e: any) => {
     setSearchString(e.target.value);
-
-    if (e.target.value) {
-      const originTabs = isOpenTabsView ? tabs : archivedTabs;
-
-      const newTabs = originTabs.filter(
-        (tab) =>
-          tab.title.toLowerCase().includes(e.target.value.toLowerCase()) ||
-          tab.url.toLowerCase().includes(e.target.value.toLowerCase())
-      );
-      setFilteredTabs(newTabs);
-    } else {
-      setFilteredTabs(tabs);
-    }
   };
 
   const clearOpenTabs = (deviceName: string) => {
     archiveOpenTabs(deviceName);
-    setFilteredTabs([]);
+    setFilters(filters.filter((f) => f !== deviceName));
   };
 
   const clearArchivedTabs = (deviceName: string) => {
     removeArchivedTabs(deviceName);
-    setFilteredTabs([]);
+    setFilters(filters.filter((f) => f !== deviceName));
   };
 
-  const urls = useMemo(() => {
-    if (searchString) {
-      return filteredTabs;
+  const handleRefresh = async () => {
+    setLoading(true);
+
+    if (isOpenTabsView) {
+      setTabs((await getOpenTabs()).data.sort(sortByTimeStamp));
+    } else {
+      setArchivedTabs((await getArchivedTabs()).data.sort(sortByTimeStamp));
     }
 
-    return isOpenTabsView ? tabs : archivedTabs;
-  }, [searchString, isOpenTabsView, tabs, archivedTabs, filteredTabs]);
-
-  const drawerWidth = 240;
+    setTimeout(() => {
+      setLoading(false);
+    }, 250);
+  };
 
   const drawer = (
     <Box pt={8}>
@@ -244,13 +290,83 @@ const Home = () => {
         </Drawer>
       </Box>
 
-      <TextField
-        type="text"
-        placeholder="search..."
-        value={searchString}
-        onChange={handleSearch}
-        fullWidth
-      />
+      <Box display="flex" gap={1}>
+        <Tooltip title="Refresh">
+          <IconButton onClick={handleRefresh}>
+            {loading ? <CircularProgress size={20} /> : <RefreshTwoTone />}
+          </IconButton>
+        </Tooltip>
+        <TextField
+          size="small"
+          type="text"
+          placeholder="Find your tabs"
+          value={searchString}
+          onChange={handleSearch}
+          fullWidth
+        />
+        <Tooltip title="Device Filters">
+          <IconButton
+            id="basic-button"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          >
+            <DevicesTwoTone />
+          </IconButton>
+        </Tooltip>
+        <Menu
+          id="filter-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+          anchorOrigin={{
+            vertical: "center",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <MenuList>
+            <ListItemText sx={{ px: 2 }}>
+              <Typography>Available devices:</Typography>
+              <Typography variant="subtitle2">
+                Click to hide or unhide devices from the list
+              </Typography>
+            </ListItemText>
+
+            {browsers.map((browser: string) => {
+              return (
+                <MenuItem
+                  key={browser}
+                  onClick={() => {
+                    if (filters.includes(browser)) {
+                      setFilters(filters.filter((f) => f !== browser));
+                    } else {
+                      setFilters([...filters, browser]);
+                    }
+                  }}
+                >
+                  <ListItemIcon>
+                    {filters.includes(browser) && <CheckTwoTone />}
+                  </ListItemIcon>
+                  <ListItemText>{browser}</ListItemText>
+                </MenuItem>
+              );
+            })}
+          </MenuList>
+        </Menu>
+        <Tooltip title="Change layouts">
+          <IconButton about="View as grid" onClick={toggleLayout}>
+            {layout === "grid" ? <Grid3x3TwoTone /> : <ListAltTwoTone />}
+          </IconButton>
+        </Tooltip>
+      </Box>
 
       {loading && (
         <Box
@@ -261,30 +377,23 @@ const Home = () => {
           gap={2}
           color="#696969"
         >
-          <CircularProgress /> Getting your tabs...
+          Getting your tabs...
         </Box>
       )}
 
-      {!loading && (
+      {!loading && layout === "list" && (
         <UrlList
+          view={view}
           urls={urls}
           onClear={isOpenTabsView ? clearOpenTabs : clearArchivedTabs}
-          onRefresh={() => {
-            isOpenTabsView
-              ? getOpenTabs().then(
-                  (openTabs) => {
-                    setTabs(openTabs.data);
-                    setFilteredTabs(openTabs.data);
-                  },
-                  () => {}
-                )
-              : getArchivedTabs().then(
-                  (archived) => {
-                    setArchivedTabs(archived.data);
-                  },
-                  () => {}
-                );
-          }}
+        />
+      )}
+
+      {!loading && layout === "grid" && (
+        <UrlGrid
+          view={view}
+          urls={urls}
+          onClear={isOpenTabsView ? clearOpenTabs : clearArchivedTabs}
         />
       )}
 

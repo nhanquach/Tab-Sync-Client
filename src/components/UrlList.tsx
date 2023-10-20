@@ -6,21 +6,28 @@ import groupBy from "lodash.groupby";
 import { ITab } from "../interfaces/iTab";
 import {
   Box,
-  Button,
   Card,
   CardContent,
   CardHeader,
+  IconButton,
   Link,
+  Tooltip,
 } from "@mui/material";
-import { PhonelinkTwoTone } from "@mui/icons-material";
+import {
+  ArchiveTwoTone,
+  DeleteForeverTwoTone,
+  PhonelinkTwoTone,
+} from "@mui/icons-material";
+import { IView } from "../interfaces/iView";
+import { VIEWS } from "../routes";
 
 interface IUrlListProps {
+  view: IView;
   onClear: (deviceName: string) => void;
-  onRefresh: (e: React.MouseEvent) => void;
   urls: ITab[];
 }
 
-const UrlList: React.FC<IUrlListProps> = ({ onClear, onRefresh, urls }) => {
+const UrlList: React.FC<IUrlListProps> = ({ onClear, urls, view }) => {
   const groupByBrowser = groupBy(urls, "deviceName");
   const browsers = Object.keys(groupByBrowser);
 
@@ -58,22 +65,15 @@ const UrlList: React.FC<IUrlListProps> = ({ onClear, onRefresh, urls }) => {
             <CardHeader
               title={name || "Unknown ¯\\_(ツ)_/¯ "}
               action={
-                <Box mt={1}>
-                  <Button
-                    className="outline"
-                    onClick={() => onClear(name)}
-                    style={{ border: 0, padding: "0 10px" }}
-                    disabled={urls.length === 0}
+                <Box>
+                  <Tooltip
+                    title={view === "open_tabs" ? "Archive tabs" : "Clear"}
                   >
-                    Clear
-                  </Button>
-                  <Button
-                    className="outline"
-                    onClick={onRefresh}
-                    style={{ border: 0, padding: "0 10px" }}
-                  >
-                    Refresh
-                  </Button>
+                    <IconButton onClick={() => onClear(name)}>
+                      {view === "open_tabs" && <ArchiveTwoTone />}
+                      {view === "archived_tabs" && <DeleteForeverTwoTone />}
+                    </IconButton>
+                  </Tooltip>
                 </Box>
               }
             />
