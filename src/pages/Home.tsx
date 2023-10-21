@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   getOpenTabs,
   getArchivedTabs,
@@ -40,11 +40,15 @@ import {
   LightbulbCircleTwoTone,
   ListAltTwoTone,
   RefreshTwoTone,
+  SortByAlphaTwoTone,
+  TimelineTwoTone,
 } from "@mui/icons-material";
 import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
 import { sortByTimeStamp } from "../utils/sortByTimeStamp";
 import QRCode from "../components/QRCode";
 import UrlGrid from "../components/UrlGrid";
+import { useKeyPress } from "../hooks/useKeyPress";
+import { sortByTitle } from "../utils/sortByTitle";
 
 const drawerWidth = 240;
 
@@ -58,12 +62,21 @@ const Home = () => {
   const [searchString, setSearchString] = useState<string>();
   const [filters, setFilters] = useState<string[]>([]);
 
-  const [layout, setLayout] = useState<"grid" | "list">("grid");
+  const [layout, setLayout] = useState<"grid" | "list">("list");
+  const [orderBy, setOrderBy] = useState<"time" | "title">("time");
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const isOpenTabsView = view === "open_tabs";
+
+  const searchBoxRef = useRef<HTMLInputElement>(null);
+
+  const onKeyPress = (e: any) => {
+    searchBoxRef.current?.focus();
+  };
+
+  useKeyPress({ keys: ["k"], callback: onKeyPress, isCombinedWithCtrl: true });
 
   const browsers = useMemo(() => {
     const devices = Array.from(new Set(tabs.map((url) => url.deviceName)));
@@ -89,8 +102,10 @@ const Home = () => {
       );
     }
 
-    return displayedTabs.sort(sortByTimeStamp);
-  }, [isOpenTabsView, tabs, archivedTabs, filters, searchString]);
+    return displayedTabs.sort(
+      orderBy === "time" ? sortByTimeStamp : sortByTitle
+    );
+  }, [isOpenTabsView, tabs, archivedTabs, filters, searchString, orderBy]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -129,6 +144,12 @@ const Home = () => {
 
   const toggleLayout = () => {
     setLayout((currentLayout) => (currentLayout === "grid" ? "list" : "grid"));
+  };
+
+  const toggleOrderBy = () => {
+    setOrderBy((currentOrderBy) =>
+      currentOrderBy === "time" ? "title" : "time"
+    );
   };
 
   // Get Open Tabs and Archived Tabs based on View
@@ -290,16 +311,30 @@ const Home = () => {
         </Drawer>
       </Box>
 
-      <Box display="flex" gap={1}>
+      <Box display="flex" gap={1} mt={1}>
         <Tooltip title="Refresh">
           <IconButton onClick={handleRefresh}>
             {loading ? <CircularProgress size={20} /> : <RefreshTwoTone />}
           </IconButton>
         </Tooltip>
         <TextField
+          inputRef={searchBoxRef}
           size="small"
           type="text"
-          placeholder="Find your tabs"
+          label={
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Box>Find your tabs</Box>
+              <Box ml={1} border={1} borderColor="#3e3e3e" borderRadius={1} px={1}>
+                ⌘K
+              </Box>
+            </Box>
+          }
+          variant="outlined"
           value={searchString}
           onChange={handleSearch}
           fullWidth
@@ -362,8 +397,13 @@ const Home = () => {
           </MenuList>
         </Menu>
         <Tooltip title="Change layouts">
-          <IconButton about="View as grid" onClick={toggleLayout}>
+          <IconButton onClick={toggleLayout}>
             {layout === "grid" ? <Grid3x3TwoTone /> : <ListAltTwoTone />}
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Order by Time / Alphabet">
+          <IconButton onClick={toggleOrderBy}>
+            {orderBy === "time" ? <TimelineTwoTone /> : <SortByAlphaTwoTone />}
           </IconButton>
         </Tooltip>
       </Box>
