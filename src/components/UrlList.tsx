@@ -19,7 +19,6 @@ import {
   PhonelinkTwoTone,
 } from "@mui/icons-material";
 import { IView } from "../interfaces/iView";
-import { VIEWS } from "../routes";
 
 interface IUrlListProps {
   view: IView;

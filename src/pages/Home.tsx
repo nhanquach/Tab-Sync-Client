@@ -15,12 +15,7 @@ import {
   BottomNavigationAction,
   Box,
   CircularProgress,
-  Divider,
-  Drawer,
   IconButton,
-  List,
-  ListItem,
-  ListItemButton,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -45,12 +40,10 @@ import {
 } from "@mui/icons-material";
 import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
 import { sortByTimeStamp } from "../utils/sortByTimeStamp";
-import QRCode from "../components/QRCode";
 import UrlGrid from "../components/UrlGrid";
 import { useKeyPress } from "../hooks/useKeyPress";
 import { sortByTitle } from "../utils/sortByTitle";
-
-const drawerWidth = 240;
+import Drawer from "../components/Drawer";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -249,68 +242,9 @@ const Home = () => {
     }, 250);
   };
 
-  const drawer = (
-    <Box pt={8}>
-      <List>
-        <ListItemButton
-          sx={{ mb: 2 }}
-          selected={view === "open_tabs"}
-          onClick={() => setView("open_tabs")}
-        >
-          <ListItemIcon>
-            <CloudSyncTwoTone sx={{ fontSize: 30 }} />
-          </ListItemIcon>
-          <ListItemText primary="Open tabs" />
-        </ListItemButton>
-        <ListItemButton
-          sx={{ mb: 2 }}
-          selected={view === "archived_tabs"}
-          onClick={() => setView("archived_tabs")}
-        >
-          <ListItemIcon>
-            <ArchiveTwoTone sx={{ fontSize: 30 }} />
-          </ListItemIcon>
-          <ListItemText primary="Archived tabs" />
-        </ListItemButton>
-        <Divider sx={{ pt: 6 }} />
-        <ListItem>
-          <ListItemIcon
-            style={{ maxWidth: "100%" }}
-            sx={{
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            <QRCode />
-          </ListItemIcon>
-        </ListItem>
-      </List>
-    </Box>
-  );
-
   return (
     <>
-      <Box
-        component="nav"
-        sx={{
-          width: { md: drawerWidth },
-          flexShrink: { md: 0 },
-        }}
-      >
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", md: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-
+      <Drawer view={view} setView={setView} />
       <Box display="flex" gap={1} mt={1}>
         <Tooltip title="Refresh">
           <IconButton onClick={handleRefresh}>
@@ -329,7 +263,13 @@ const Home = () => {
               }}
             >
               <Box>Find your tabs</Box>
-              <Box ml={1} border={1} borderColor="#3e3e3e" borderRadius={1} px={1}>
+              <Box
+                ml={1}
+                border={1}
+                borderColor="#3e3e3e"
+                borderRadius={1}
+                px={1}
+              >
                 ⌘K
               </Box>
             </Box>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -7,8 +8,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+
 import { VIEWS } from "../routes";
 import Logo from "../components/Logo";
+import DownloadCard from "../components/DownloadCard";
+import AboutCard from "../components/AboutCard";
+import QRCode from "../components/QRCode";
 
 interface ISignInProps {
   signIn: ({
@@ -40,8 +46,11 @@ const SignIn: React.FC<ISignInProps> = ({ signIn, setView }) => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{mt: 4}}>
-      <Card sx={{ backdropFilter: "blur(8px)", background: "none" }} elevation={0}>
+    <Container>
+      <Card
+        sx={{ backdropFilter: "blur(8px)", background: "none" }}
+        elevation={0}
+      >
         <CardContent>
           <Typography variant="h4" display="flex" gap={2} mb={2}>
             <Logo />
@@ -82,6 +91,14 @@ const SignIn: React.FC<ISignInProps> = ({ signIn, setView }) => {
           </form>
         </CardContent>
       </Card>
+      <Grid2 container gap={2} alignContent="center" justifyContent="center">
+        <DownloadCard />
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <QRCode />
+          <span>Open website on phone</span>
+        </Box>
+      </Grid2>
+      <AboutCard />
     </Container>
   );
 };

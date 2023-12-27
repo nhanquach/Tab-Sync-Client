@@ -127,3 +127,8 @@
 .bottom-navigation .circles {
   filter: blur(2px);
 }
+
+/* Remove the line for the Accordion */
+.what-is-tabsync-accordion:before {
+  height: 0 !important;
+}

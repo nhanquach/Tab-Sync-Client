@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -7,11 +8,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2";
 
 import { VIEWS } from "../routes";
 import Logo from "../components/Logo";
+import AboutCard from "../components/AboutCard";
+import DownloadCard from "../components/DownloadCard";
+import QRCode from "../components/QRCode";
 
-interface ISignInProps {
+interface ISignUpProps {
   signUp: ({
     email,
     password,
@@ -22,7 +27,7 @@ interface ISignInProps {
   setView: (view: VIEWS) => void;
 }
 
-const SignUp: React.FC<ISignInProps> = ({ signUp, setView }) => {
+const SignUp: React.FC<ISignUpProps> = ({ signUp, setView }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -45,7 +50,7 @@ const SignUp: React.FC<ISignInProps> = ({ signUp, setView }) => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
+    <Container>
       <Card
         sx={{ backdropFilter: "blur(8px)", background: "none" }}
         elevation={0}
@@ -94,6 +99,14 @@ const SignUp: React.FC<ISignInProps> = ({ signUp, setView }) => {
           </form>
         </CardContent>
       </Card>
+      <Grid2 container gap={2} alignContent="center" justifyContent="center">
+        <DownloadCard />
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <QRCode />
+          <span>Open website on phone</span>
+        </Box>
+      </Grid2>
+      <AboutCard />
     </Container>
   );
 };

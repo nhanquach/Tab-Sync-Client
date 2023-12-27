@@ -1,5 +1,5 @@
-import { useTheme } from "@mui/material";
 import * as React from "react";
+import { useTheme } from "@mui/material";
 
 const SVGComponent = () => {
   const theme = useTheme();
