@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 // @ts-ignore
 import groupBy from "lodash.groupby";
 
-import { ITab } from "../interfaces/iTab";
 import {
   Box,
   Card,
@@ -18,10 +17,12 @@ import {
   DeleteForeverTwoTone,
   PhonelinkTwoTone,
 } from "@mui/icons-material";
-import { IView } from "../interfaces/iView";
+
+import { ITab } from "../interfaces/iTab";
+import { TABS_VIEWS } from "../interfaces/iView";
 
 interface IUrlListProps {
-  view: IView;
+  view: TABS_VIEWS;
   onClear: (deviceName: string) => void;
   urls: ITab[];
 }

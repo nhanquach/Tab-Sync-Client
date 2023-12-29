@@ -21,12 +21,12 @@ import {
 } from "@mui/icons-material";
 
 import { ITab } from "../interfaces/iTab";
-import { IView } from "../interfaces/iView";
 
 import styles from "../styles/UrlGrid.module.css";
+import { TABS_VIEWS } from "../interfaces/iView";
 
 interface IUrlGridProps {
-  view: IView;
+  view: TABS_VIEWS;
   onClear: (deviceName: string) => void;
   urls: ITab[];
 }
@@ -119,7 +119,7 @@ const UrlGrid: React.FC<IUrlGridProps> = ({ onClear, urls, view }) => {
                             </>
                           }
                         >
-                          <Card sx={{ height: "100%", borderRadius: 4 }}>
+                          <Card sx={{ height: "100%", borderRadius: 4 }} variant="outlined">
                             <CardContent>
                               <img
                                 src={tab.favIconUrl}

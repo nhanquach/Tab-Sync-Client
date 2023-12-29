@@ -1,20 +1,12 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { AlertColor, Box, Container } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
-import { VIEWS } from "../routes";
-import Logo from "../components/Logo";
+import { ROUTES } from "../routes";
 import DownloadCard from "../components/DownloadCard";
-import AboutCard from "../components/AboutCard";
+import AboutAccordion from "../components/AboutAccordion";
 import QRCode from "../components/QRCode";
+import SignInForm from "../components/SignInForm";
 
 interface ISignInProps {
   signIn: ({
@@ -24,81 +16,81 @@ interface ISignInProps {
     email: string;
     password: string;
   }) => Promise<{ error: string }>;
-  setView: (view: VIEWS) => void;
+  onResetPassword: ({ email }: { email: string }) => void;
+  setView: (view: ROUTES) => void;
 }
 
-const SignIn: React.FC<ISignInProps> = ({ signIn, setView }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+const SignIn: React.FC<ISignInProps> = ({
+  signIn,
+  setView,
+  onResetPassword,
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const [message, setMessage] = useState<{ type: AlertColor; text: string }>({
+    type: "error",
+    text: "",
+  });
 
+  const onSignIn = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    setIsLoading(true);
     const { error } = await signIn({
       email,
       password,
     });
 
     if (error) {
-      setMessage(error);
+      setMessage({ type: "error", text: error });
     }
+
+    setIsLoading(false);
+  };
+
+  const resetPassword = async ({ email }: { email: string }) => {
+    if (!email) {
+      setMessage({ type: "error", text: "Please enter your email" });
+      return;
+    }
+
+    setMessage({ type: message.type, text: "" });
+    await onResetPassword({ email });
+    setMessage({
+      type: "info",
+      text: "Check your email for a link to reset your password",
+    });
   };
 
   return (
-    <Container>
-      <Card
-        sx={{ backdropFilter: "blur(8px)", background: "none" }}
-        elevation={0}
+    <Container maxWidth="xl">
+      <Grid2
+        container
+        spacing={4}
+        justifyContent={{ xs: "center", md: "space-between" }}
+        alignItems="center"
       >
-        <CardContent>
-          <Typography variant="h4" display="flex" gap={2} mb={2}>
-            <Logo />
-            Tab Sync
-          </Typography>
-          <form onSubmit={onSignIn} action="none">
-            <Typography variant="h5">Sign in</Typography>
-            <TextField
-              variant="outlined"
-              fullWidth
-              type="text"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              label="Email"
-              margin="normal"
-            />
-
-            <TextField
-              variant="outlined"
-              fullWidth
-              label="Password"
-              type="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              margin="normal"
-            />
-            {!!message && <p>{message}</p>}
-            <Button variant="contained" type="submit" fullWidth sx={{ my: 2 }}>
-              Sign in
-            </Button>
-            <Button fullWidth onClick={() => setView(VIEWS.SIGN_UP)}>
-              Create a new account
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-      <Grid2 container gap={2} alignContent="center" justifyContent="center">
-        <DownloadCard />
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <QRCode />
-          <span>Open website on phone</span>
-        </Box>
+        <Grid2 md={8} sm={12}>
+          <SignInForm
+            message={message}
+            isLoading={isLoading}
+            onSignIn={onSignIn}
+            setView={setView}
+            onResetPassword={resetPassword}
+          />
+        </Grid2>
+        <Grid2 md={4} sm={12} alignItems="center">
+          <Box display="flex" flexDirection={"column"} alignItems="center">
+            <DownloadCard />
+            <QRCode width={200} height={200} text="TabSync on your phone" />
+          </Box>
+        </Grid2>
       </Grid2>
-      <AboutCard />
+      <AboutAccordion />
     </Container>
   );
 };

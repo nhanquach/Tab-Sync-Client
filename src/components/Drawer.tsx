@@ -12,14 +12,13 @@ import {
   Drawer as MUIDrawer,
 } from "@mui/material";
 
-import { IView } from "../interfaces/iView";
-
 import QRCode from "./QRCode";
 import DownloadCard from "./DownloadCard";
+import { TABS_VIEWS } from "../interfaces/iView";
 
 interface IDrawerProps {
   view: string;
-  setView: (view: IView) => void;
+  setView: (view: TABS_VIEWS) => void;
 }
 
 const drawerWidth = 240;
@@ -48,8 +47,8 @@ const Drawer: React.FC<IDrawerProps> = ({ view, setView }) => {
           <List>
             <ListItemButton
               sx={{ mb: 2 }}
-              selected={view === "open_tabs"}
-              onClick={() => setView("open_tabs")}
+              selected={view === TABS_VIEWS.OPEN_TABS}
+              onClick={() => setView(TABS_VIEWS.OPEN_TABS)}
             >
               <ListItemIcon>
                 <CloudSyncTwoTone sx={{ fontSize: 30 }} />
@@ -58,8 +57,8 @@ const Drawer: React.FC<IDrawerProps> = ({ view, setView }) => {
             </ListItemButton>
             <ListItemButton
               sx={{ mb: 2 }}
-              selected={view === "archived_tabs"}
-              onClick={() => setView("archived_tabs")}
+              selected={view === TABS_VIEWS.ARCHIVED_TABS}
+              onClick={() => setView(TABS_VIEWS.ARCHIVED_TABS)}
             >
               <ListItemIcon>
                 <ArchiveTwoTone sx={{ fontSize: 30 }} />
@@ -70,15 +69,8 @@ const Drawer: React.FC<IDrawerProps> = ({ view, setView }) => {
             <ListItem>
               <DownloadCard small />
             </ListItem>
-            <ListItem>
-              <ListItemIcon
-                style={{ maxWidth: "100%" }}
-                sx={{
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                <QRCode />
-              </ListItemIcon>
+            <ListItem sx={{ justifyContent: "center", display: "flex" }}>
+              <QRCode width={200} height={200} text="TabSync on your phone" />
             </ListItem>
           </List>
         </Box>

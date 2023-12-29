@@ -1,8 +1,18 @@
 import React from "react";
 
-const LiveBackground = () => {
+interface ILiveBackground {
+  fullHeight: boolean;
+}
+
+const LiveBackground: React.FC<ILiveBackground> = ({ fullHeight }) => {
   return (
-    <ul className="circles">
+    <ul
+      className="circles"
+      style={{
+        height: fullHeight ? "100vh" : "auto",
+        position: fullHeight ? "fixed" : "absolute",
+      }}
+    >
       <li></li>
       <li></li>
       <li></li>

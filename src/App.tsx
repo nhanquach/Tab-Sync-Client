@@ -14,30 +14,29 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { User } from "@supabase/supabase-js";
 
-import { getUser, signUp, signIn } from "./clients";
+import { getUser, signUp, signIn, resetPassword } from "./clients";
 import { signOut } from "./clients/supabaseClient";
 
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 
-import { VIEWS } from "./routes";
+import { ROUTES } from "./routes";
 import Home from "./pages/Home";
 import QRCode from "./components/QRCode";
-import HomeAppBar from "./components/HomeAppBar";
 import LiveBackground from "./components/LiveBackground";
 import { drawerWidth } from "./utils/dimensions";
 
 function App() {
   const [showModal, setShowModal] = useState(false);
 
-  const [view, setView] = useState<VIEWS>(VIEWS.SIGN_IN);
+  const [view, setView] = useState<ROUTES>(ROUTES.SIGN_IN);
 
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
     getUser().then((userData) => {
       if (userData) {
-        setView(VIEWS.HOME);
+        setView(ROUTES.HOME);
         setUser(userData);
       }
     });
@@ -79,7 +78,7 @@ function App() {
     }
 
     setUser(data.user);
-    setView(VIEWS.HOME);
+    setView(ROUTES.HOME);
 
     return {
       error: "",
@@ -87,8 +86,12 @@ function App() {
   };
 
   const onSignOut = async () => {
-    signOut();
-    setView(VIEWS.SIGN_IN);
+    await signOut();
+    setView(ROUTES.SIGN_IN);
+  };
+
+  const onResetPassword = async ({ email }: { email: string }) => {
+    await resetPassword({ email });
   };
 
   const showQRCode = () => {
@@ -118,39 +121,40 @@ function App() {
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        {view === VIEWS.HOME && (
-          <HomeAppBar
-            user={user}
-            onSignOut={onSignOut}
-            toggleQRCode={showQRCode}
-          />
-        )}
         <div className="area">
-          {view !== VIEWS.HOME && <LiveBackground />}
+          {view !== ROUTES.HOME && <LiveBackground fullHeight />}
           <Container
             sx={{
               flexGrow: 1,
               p: 3,
               mt: 6,
               width:
-                view === VIEWS.HOME
+                view === ROUTES.HOME
                   ? { sm: `calc(100% - ${drawerWidth}px)` }
                   : "100%",
-              pl: view === VIEWS.HOME ? { md: `${drawerWidth}px` } : {},
+              pl: view === ROUTES.HOME ? { md: `${drawerWidth}px` } : {},
             }}
             component="main"
           >
-            {view === VIEWS.SIGN_IN && (
-              <SignIn signIn={onSignIn} setView={setView} />
+            {view === ROUTES.SIGN_IN && (
+              <SignIn
+                signIn={onSignIn}
+                setView={setView}
+                onResetPassword={onResetPassword}
+              />
             )}
 
-            {view === VIEWS.SIGN_UP && (
+            {view === ROUTES.SIGN_UP && (
               <SignUp signUp={onSignUp} setView={setView} />
             )}
 
-            {view === VIEWS.HOME && (
+            {view === ROUTES.HOME && (
               <Box pb={8}>
-                <Home />
+                <Home
+                  user={user}
+                  onSignOut={onSignOut}
+                  toggleQRCode={showQRCode}
+                />
               </Box>
             )}
           </Container>

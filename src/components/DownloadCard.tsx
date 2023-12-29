@@ -12,14 +12,15 @@ const DownloadCard: React.FC<IDownLoadCardProps> = ({ small }) => {
       sx={{
         backdropFilter: "blur(8px)",
         background: "none",
-        my: small ? 0 : 2,
+        my: small ? 0 : 1,
         mx: small ? -2 : 0,
       }}
       elevation={0}
+      variant={small ? undefined : "outlined"}
     >
       <CardContent>
         <Typography variant="h5" display="flex" gap={2} mb={2}>
-          {small ? "Get TabSync" : "Get TabSync on your browser"}
+          {small ? "Get TabSync" : "Get TabSync for"}
         </Typography>
         <Button
           size={small ? "small" : "medium"}

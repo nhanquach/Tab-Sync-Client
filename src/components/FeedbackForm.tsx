@@ -1,7 +1,9 @@
 import React from "react";
 import {
+  Alert,
   Box,
   Button,
+  CircularProgress,
   FormControl,
   InputLabel,
   Link,
@@ -18,13 +20,14 @@ interface IFeedbackProps {
   sendFeedback: (type: string, description: string) => void;
 }
 
-const Feedback: React.FC<IFeedbackProps> = ({ sendFeedback }) => {
+const FeedbackForm: React.FC<IFeedbackProps> = ({ sendFeedback }) => {
   const theme = useTheme();
 
   const [type, setType] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [message, setMessage] = React.useState("");
+  const [error, setError] = React.useState("");
 
   const handleChange = (event: SelectChangeEvent) => {
     setType(event.target.value as string);
@@ -36,44 +39,44 @@ const Feedback: React.FC<IFeedbackProps> = ({ sendFeedback }) => {
 
   const handleSendFeedback = async () => {
     setIsLoading(true);
-    await sendFeedback(type, description);
+    setError("");
+
+    if (type && description) {
+      setMessage("Your feedback has been sent. Thank you!");
+      await sendFeedback(type, description);
+
+      setType("");
+      setDescription("");
+    } else {
+      setError("Oops, are you forgetting something?");
+      setMessage("");
+    }
 
     setIsLoading(false);
-    setMessage("Your feedback has been sent. Thank you!");
-    setType("");
-    setDescription("");
   };
 
   return (
-    <div>
-      <Box>
-        <Typography variant="h6">
-          <HandshakeOutlined
-            sx={{ color: theme.palette.primary.main, mr: 1 }}
-          />{" "}
-          Hey there!{" "}
-        </Typography>
-        <Typography>
-          {" "}
-          If you love our app, we would greatly appreciate your support.{" "}
-        </Typography>
-        <Typography>
-          Sharing is caring! Share the app with your friends and family so they
-          can enjoy it too.
-        </Typography>
-        <Typography>
-          Don&lsquo;t forget to rate the app on your app store. Your feedback
-          helps us improve!
-        </Typography>
-        <Typography>
-          {" "}
-          Thanks for being part of our community. Your support means the world
-          to us!
-        </Typography>
+    <>
+      <Box display="flex" alignItems="center">
+        <HandshakeOutlined
+          sx={{ color: theme.palette.primary.main, mr: 1, fontSize: 30 }}
+        />
+        <Typography variant="h4">Hi there 🙌🏼</Typography>
       </Box>
-
+      <Typography>
+        Thank you for trying out! We'd love to hear from you.
+      </Typography>
       <Typography>All feedback are welcome!</Typography>
-      <Typography color={theme.palette.primary.main}>{message}</Typography>
+      {message && (
+        <Alert>
+          <Typography>{message}</Typography>
+        </Alert>
+      )}
+      {error && (
+        <Alert severity="warning">
+          <Typography>Oops, are you forgetting something? 👇🏼</Typography>
+        </Alert>
+      )}
       <FormControl fullWidth sx={{ mt: 2 }}>
         <InputLabel id="feedback-type-select">Lemme tell you about</InputLabel>
         <Select
@@ -82,6 +85,7 @@ const Feedback: React.FC<IFeedbackProps> = ({ sendFeedback }) => {
           value={type}
           label="Lemme tell you about"
           onChange={handleChange}
+          required
         >
           <MenuItem value="bug">a bug</MenuItem>
           <MenuItem value="suggestion">a feature suggestion</MenuItem>
@@ -99,7 +103,8 @@ const Feedback: React.FC<IFeedbackProps> = ({ sendFeedback }) => {
           placeholder=" More detail"
           value={description}
           onChange={handleDescriptionChange}
-          minRows={5}
+          minRows={10}
+          required
         />
 
         <Button
@@ -109,7 +114,7 @@ const Feedback: React.FC<IFeedbackProps> = ({ sendFeedback }) => {
           onClick={handleSendFeedback}
           disabled={isLoading}
         >
-          Submit
+          {isLoading ? <CircularProgress size={20} /> : "Send"}
         </Button>
       </FormControl>
       <Box color={theme.palette.secondary.main} my={2}>
@@ -120,8 +125,8 @@ const Feedback: React.FC<IFeedbackProps> = ({ sendFeedback }) => {
           </Link>
         </Typography>
       </Box>
-    </div>
+    </>
   );
 };
 
-export default Feedback;
+export default FeedbackForm;

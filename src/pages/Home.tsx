@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   getOpenTabs,
   getArchivedTabs,
@@ -9,67 +9,47 @@ import {
 } from "../clients";
 import UrlList from "../components/UrlList";
 import { ITab } from "../interfaces/iTab";
-import { IView } from "../interfaces/iView";
+import { TABS_VIEWS } from "../interfaces/iView";
 import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
-  CircularProgress,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  MenuList,
   Paper,
-  TextField,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import {
   ArchiveTwoTone,
-  CheckTwoTone,
   CloudSyncTwoTone,
-  DevicesTwoTone,
-  Grid3x3TwoTone,
   LightbulbCircleTwoTone,
-  ListAltTwoTone,
-  RefreshTwoTone,
-  SortByAlphaTwoTone,
-  TimelineTwoTone,
 } from "@mui/icons-material";
 import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
 import { sortByTimeStamp } from "../utils/sortByTimeStamp";
 import UrlGrid from "../components/UrlGrid";
-import { useKeyPress } from "../hooks/useKeyPress";
 import { sortByTitle } from "../utils/sortByTitle";
 import Drawer from "../components/Drawer";
+import Toolbar, { TLayout, TOrderBy } from "../components/Toolbar";
+import HomeAppBar from "../components/HomeAppBar";
 
-const Home = () => {
-  const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<IView>("open_tabs");
+interface IHomeProps {
+  user?: any;
+  onSignOut: () => void;
+  toggleQRCode: () => void;
+}
+
+const Home: React.FC<IHomeProps> = ({ user, onSignOut, toggleQRCode }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [view, setView] = useState<TABS_VIEWS>(TABS_VIEWS.OPEN_TABS);
 
   const [tabs, setTabs] = useState<ITab[]>([]);
   const [archivedTabs, setArchivedTabs] = useState<ITab[]>([]);
 
-  const [searchString, setSearchString] = useState<string>();
-  const [filters, setFilters] = useState<string[]>([]);
+  const [searchString, setSearchString] = useState<string>("");
+  const [displayedBrowsers, setDisplayedBrowsers] = useState<string[]>([]);
 
-  const [layout, setLayout] = useState<"grid" | "list">("list");
-  const [orderBy, setOrderBy] = useState<"time" | "title">("time");
+  const [layout, setLayout] = useState<TLayout>("list");
+  const [orderBy, setOrderBy] = useState<TOrderBy>("time");
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const isOpenTabsView = view === "open_tabs";
-
-  const searchBoxRef = useRef<HTMLInputElement>(null);
-
-  const onKeyPress = (e: any) => {
-    searchBoxRef.current?.focus();
-  };
-
-  useKeyPress({ keys: ["k"], callback: onKeyPress, isCombinedWithCtrl: true });
+  const isOpenTabsView = useMemo(() => view === TABS_VIEWS.OPEN_TABS, [view]);
 
   const browsers = useMemo(() => {
     const devices = Array.from(new Set(tabs.map((url) => url.deviceName)));
@@ -80,9 +60,9 @@ const Home = () => {
     let displayedTabs = isOpenTabsView ? tabs : archivedTabs;
 
     // apply filters if any
-    if (filters.length > 0) {
+    if (displayedBrowsers.length > 0) {
       displayedTabs = displayedTabs.filter((tab) =>
-        filters.includes(tab.deviceName)
+        displayedBrowsers.includes(tab.deviceName)
       );
     }
 
@@ -98,17 +78,17 @@ const Home = () => {
     return displayedTabs.sort(
       orderBy === "time" ? sortByTimeStamp : sortByTitle
     );
-  }, [isOpenTabsView, tabs, archivedTabs, filters, searchString, orderBy]);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  }, [
+    isOpenTabsView,
+    tabs,
+    archivedTabs,
+    displayedBrowsers,
+    searchString,
+    orderBy,
+  ]);
 
   const handleGetOpenTabs = async () => {
-    setLoading(true);
+    setIsLoading(true);
 
     const { data: newTabs, error } = await getOpenTabs();
 
@@ -118,11 +98,11 @@ const Home = () => {
     }
 
     setTabs(newTabs.sort(sortByTimeStamp));
-    setLoading(false);
+    setIsLoading(false);
   };
 
   const handleGetArchivedTabs = async () => {
-    setLoading(true);
+    setIsLoading(true);
 
     const { data: newTabs, error } = await getArchivedTabs();
 
@@ -132,7 +112,7 @@ const Home = () => {
     }
 
     setArchivedTabs(newTabs.sort(sortByTimeStamp));
-    setLoading(false);
+    setIsLoading(false);
   };
 
   const toggleLayout = () => {
@@ -211,7 +191,7 @@ const Home = () => {
   // Select all devices as filters
   useEffect(() => {
     const devices = Array.from(new Set(tabs.map((url) => url.deviceName)));
-    setFilters(devices);
+    setDisplayedBrowsers(devices);
   }, [tabs]);
 
   const handleSearch = (e: any) => {
@@ -220,16 +200,16 @@ const Home = () => {
 
   const clearOpenTabs = (deviceName: string) => {
     archiveOpenTabs(deviceName);
-    setFilters(filters.filter((f) => f !== deviceName));
+    setDisplayedBrowsers(displayedBrowsers.filter((f) => f !== deviceName));
   };
 
   const clearArchivedTabs = (deviceName: string) => {
     removeArchivedTabs(deviceName);
-    setFilters(filters.filter((f) => f !== deviceName));
+    setDisplayedBrowsers(displayedBrowsers.filter((f) => f !== deviceName));
   };
 
   const handleRefresh = async () => {
-    setLoading(true);
+    setIsLoading(true);
 
     if (isOpenTabsView) {
       setTabs((await getOpenTabs()).data.sort(sortByTimeStamp));
@@ -238,117 +218,41 @@ const Home = () => {
     }
 
     setTimeout(() => {
-      setLoading(false);
+      setIsLoading(false);
     }, 250);
+  };
+
+  const handleSignOut = () => {
+    setTabs([]);
+    setArchivedTabs([]);
+    onSignOut();
   };
 
   return (
     <>
+      <HomeAppBar
+        user={user}
+        onSignOut={handleSignOut}
+        toggleQRCode={toggleQRCode}
+      />
+
       <Drawer view={view} setView={setView} />
-      <Box display="flex" gap={1} mt={1}>
-        <Tooltip title="Refresh">
-          <IconButton onClick={handleRefresh}>
-            {loading ? <CircularProgress size={20} /> : <RefreshTwoTone />}
-          </IconButton>
-        </Tooltip>
-        <TextField
-          inputRef={searchBoxRef}
-          size="small"
-          type="text"
-          label={
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Box>Find your tabs</Box>
-              <Box
-                ml={1}
-                border={1}
-                borderColor="#3e3e3e"
-                borderRadius={1}
-                px={1}
-              >
-                ⌘K
-              </Box>
-            </Box>
-          }
-          variant="outlined"
-          value={searchString}
-          onChange={handleSearch}
-          fullWidth
-        />
-        <Tooltip title="Device Filters">
-          <IconButton
-            id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-          >
-            <DevicesTwoTone />
-          </IconButton>
-        </Tooltip>
-        <Menu
-          id="filter-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
-          anchorOrigin={{
-            vertical: "center",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-        >
-          <MenuList>
-            <ListItemText sx={{ px: 2 }}>
-              <Typography>Available devices:</Typography>
-              <Typography variant="subtitle2">
-                Click to hide or unhide devices from the list
-              </Typography>
-            </ListItemText>
 
-            {browsers.map((browser: string) => {
-              return (
-                <MenuItem
-                  key={browser}
-                  onClick={() => {
-                    if (filters.includes(browser)) {
-                      setFilters(filters.filter((f) => f !== browser));
-                    } else {
-                      setFilters([...filters, browser]);
-                    }
-                  }}
-                >
-                  <ListItemIcon>
-                    {filters.includes(browser) && <CheckTwoTone />}
-                  </ListItemIcon>
-                  <ListItemText>{browser}</ListItemText>
-                </MenuItem>
-              );
-            })}
-          </MenuList>
-        </Menu>
-        <Tooltip title="Change layouts">
-          <IconButton onClick={toggleLayout}>
-            {layout === "grid" ? <Grid3x3TwoTone /> : <ListAltTwoTone />}
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Order by Time / Alphabet">
-          <IconButton onClick={toggleOrderBy}>
-            {orderBy === "time" ? <TimelineTwoTone /> : <SortByAlphaTwoTone />}
-          </IconButton>
-        </Tooltip>
-      </Box>
+      <Toolbar
+        isLoading={isLoading}
+        handleRefresh={handleRefresh}
+        searchString={searchString}
+        handleSearch={handleSearch}
+        browsers={browsers}
+        displayedBrowsers={displayedBrowsers}
+        setDisplayedBrowsers={setDisplayedBrowsers}
+        toggleLayout={toggleLayout}
+        layout={layout}
+        toggleOrderBy={toggleOrderBy}
+        orderBy={orderBy}
+      />
 
-      {loading && (
+      {isLoading && (
         <Box
           display="flex"
           justifyContent="center"
@@ -361,7 +265,7 @@ const Home = () => {
         </Box>
       )}
 
-      {!loading && layout === "list" && (
+      {!isLoading && layout === "list" && (
         <UrlList
           view={view}
           urls={urls}
@@ -369,7 +273,7 @@ const Home = () => {
         />
       )}
 
-      {!loading && layout === "grid" && (
+      {!isLoading && layout === "grid" && (
         <UrlGrid
           view={view}
           urls={urls}
@@ -377,7 +281,7 @@ const Home = () => {
         />
       )}
 
-      {!loading && (
+      {!isLoading && (
         <LightbulbCircleTwoTone
           fontSize="large"
           sx={{ display: "flex", width: "100%", my: 2 }}
@@ -385,7 +289,7 @@ const Home = () => {
         />
       )}
 
-      {!isOpenTabsView && !loading && (
+      {!isOpenTabsView && !isLoading && (
         <Typography textAlign="center" color="#696969">
           Tab Sync was created to make your browsers hopping a breeze, since all
           your tabs are synced.
@@ -394,7 +298,7 @@ const Home = () => {
         </Typography>
       )}
 
-      {isOpenTabsView && !loading && (
+      {isOpenTabsView && !isLoading && (
         <Typography textAlign="center" color="#696969">
           <span>
             <b>Tip</b>: If your tabs are not showing up, one possible reason is

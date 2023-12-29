@@ -36,6 +36,18 @@ export const getUser = async () => {
   return (await getClient()).getUser();
 };
 
+export const changePassword = async ({
+  newPassword,
+}: {
+  newPassword: string;
+}) => {
+  return (await getClient()).changePassword({ newPassword });
+};
+
+export const resetPassword = async ({ email }: { email: string }) => {
+  return (await getClient()).resetPassword({ email });
+};
+
 export const getOpenTabs = async () => {
   return (await getClient()).getOpenTabs();
 };

@@ -133,6 +133,20 @@ export const getUser = async () => {
   return user?.data?.user;
 };
 
+export const changePassword = async ({
+  newPassword,
+}: {
+  newPassword: string;
+}) => {
+  return client?.auth.updateUser({
+    password: newPassword,
+  });
+};
+
+export const resetPassword = async ({ email }: { email: string }) => {
+  return rootClient?.auth.resetPasswordForEmail(email);
+};
+
 export const getOpenTabs = async (
   deviceName?: string
 ): Promise<{

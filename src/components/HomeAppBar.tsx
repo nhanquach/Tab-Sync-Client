@@ -7,26 +7,18 @@ import {
   IconButton,
   Typography,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import {
   QrCode2TwoTone,
-  ExitToAppTwoTone,
-  FeedbackTwoTone,
 } from "@mui/icons-material";
 
 import { drawerWidth } from "../utils/dimensions";
 
 import Logo from "./Logo";
 import { User } from "@supabase/supabase-js";
-import Feedback from "./Feedback";
-import { sendFeedback } from "../clients/supabaseClient";
+import FeedbackDialog from "./FeedbackDialog";
+import AccountSettings from "./AccountSettings";
 
 interface IHomeAppBarProps {
   user?: User;
@@ -39,25 +31,10 @@ const HomeAppBar: React.FC<IHomeAppBarProps> = ({
   toggleQRCode,
   onSignOut,
 }) => {
-  const [open, setOpen] = React.useState(false);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  const handleOpenFeedback = () => {
-    setOpen(true);
-  };
-
-  const handleCloseFeedback = () => {
-    setOpen(false);
-  };
-
-  const onSendFeedback = async (title: string, description: string) => {
-    await sendFeedback(title, description);
-    handleCloseFeedback();
-  };
 
   return (
-    <Box sx={{ flexGrow: 1, mb: 10 }}>
+    <Box sx={{ flexGrow: 1 }}>
       <AppBar
         position="fixed"
         color="transparent"
@@ -85,52 +62,20 @@ const HomeAppBar: React.FC<IHomeAppBarProps> = ({
             Tab Sync
           </Typography>
           <Box display="flex" gap={1}>
-            <Button sx={{ minWidth: { xs: 32, md: 64 } }} onClick={toggleQRCode}>
+            <Button
+              size="small"
+              sx={{
+                display: { xs: "flex", md: "none" },
+              }}
+              onClick={toggleQRCode}
+            >
               <QrCode2TwoTone />
             </Button>
-            <Button sx={{ minWidth: { xs: 32, md: 64 } }} onClick={handleOpenFeedback}>
-              <FeedbackTwoTone />
-              <Typography
-                sx={{
-                  display: { xs: "none", md: "inline" },
-                }}
-              >
-                Feedback
-              </Typography>
-            </Button>
-            {user && (
-              <Button
-                sx={{ minWidth: { xs: 32, md: 64 } }}
-                variant="outlined"
-                onClick={onSignOut}
-              >
-                <ExitToAppTwoTone />
-                <Typography
-                  sx={{
-                    display: { xs: "none", md: "inline" },
-                  }}
-                >
-                  Sign out
-                </Typography>
-              </Button>
-            )}
+            <FeedbackDialog />
+            <AccountSettings user={user} onSignOut={onSignOut} />
           </Box>
         </Toolbar>
       </AppBar>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleCloseFeedback}>
-        <DialogTitle sx={{ display: "flex" }}>
-          <FeedbackTwoTone sx={{ color: theme.palette.primary.main, mr: 1 }} />
-          Feedback
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            <Feedback sendFeedback={onSendFeedback} />
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseFeedback}>Close</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };
