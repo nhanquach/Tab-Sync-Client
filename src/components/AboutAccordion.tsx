@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Accordion,
@@ -8,8 +8,18 @@ import {
   Typography,
 } from "@mui/material";
 import { ExpandMoreTwoTone } from "@mui/icons-material";
+import ShareCard from "./ShareCard";
+import { HOME_PAGE } from "../utils/constants";
 
 const AboutAccordion = () => {
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setExpanded(true);
+    }, 1000);
+  }, []);
+
   return (
     <Box mt={4}>
       <Accordion
@@ -25,10 +35,10 @@ const AboutAccordion = () => {
           expandIcon={<ExpandMoreTwoTone />}
           sx={{ borderRadius: 12 }}
         >
-          <Typography variant="h5">What is TabSync?</Typography>
+          <Typography variant="h6">What is TabSync?</Typography>
         </AccordionSummary>
         <AccordionDetails sx={{ borderRadius: 12 }}>
-          <Typography variant="h5">TabSync: Your Tabs, Everywhere</Typography>
+          <Typography variant="h6">TabSync: Your Tabs, Everywhere</Typography>
           <p>
             Hey there! Meet TabSync, the app that makes your life a bit easier.
           </p>
@@ -66,7 +76,7 @@ const AboutAccordion = () => {
             <strong>Browse</strong>: Browse like normal. Your tabs will be
             synced automatically to the cloud, you can access them anytime later
             at &nbsp;
-            <a href="https://tab-sync-b16b4.web.app/">The TabSync web app</a>
+            <a href={HOME_PAGE}>The TabSync web app</a>
           </p>
           <Typography variant="h6">Why TabSync rocks</Typography>
           <p>
@@ -93,10 +103,8 @@ const AboutAccordion = () => {
           background: "none",
         }}
       >
-        <AccordionSummary
-          expandIcon={<ExpandMoreTwoTone />}
-        >
-          <Typography variant="h5">What will be synced?</Typography>
+        <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+          <Typography variant="h6">What will be synced?</Typography>
         </AccordionSummary>
         <AccordionDetails sx={{ borderRadius: 12 }}>
           <Typography variant="h6">
@@ -106,6 +114,24 @@ const AboutAccordion = () => {
             We do not sync or store any or your sensitive information, such as
             Cookies, Session or Login Credentials.
           </Typography>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion
+        elevation={0}
+        variant="outlined"
+        className="what-is-tabsync-accordion"
+        sx={{
+          backdropFilter: "blur(12px)",
+          background: "none",
+        }}
+        expanded={expanded}
+        onChange={() => setExpanded(!expanded)}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+          <Typography variant="h6">Share TabSync</Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ borderRadius: 12 }}>
+          <ShareCard textless borderless />
         </AccordionDetails>
       </Accordion>
     </Box>

@@ -73,7 +73,7 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = ({
           backgroundColor: "transparent",
         }}
       >
-        <Typography variant="h4">Change your password</Typography>
+        <Typography variant="h5">Change your password</Typography>
         <Box display="flex" alignItems="center">
           <FormControl fullWidth sx={{ mt: 2 }}>
             <TextField

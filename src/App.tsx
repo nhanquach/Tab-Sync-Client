@@ -7,7 +7,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Typography,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -25,6 +24,8 @@ import Home from "./pages/Home";
 import QRCode from "./components/QRCode";
 import LiveBackground from "./components/LiveBackground";
 import { drawerWidth } from "./utils/dimensions";
+import DownloadCard from "./components/DownloadCard";
+import ShareCard from "./components/ShareCard";
 
 function App() {
   const [showModal, setShowModal] = useState(false);
@@ -88,6 +89,7 @@ function App() {
   const onSignOut = async () => {
     await signOut();
     setView(ROUTES.SIGN_IN);
+    window.location.replace("/");
   };
 
   const onResetPassword = async ({ email }: { email: string }) => {
@@ -159,19 +161,19 @@ function App() {
             )}
           </Container>
         </div>
-        <Dialog keepMounted open={showModal} onClose={showQRCode}>
-          <DialogTitle bgcolor={theme.palette.primary.main}>
-            <Typography variant="h6" textAlign="center">
-              {window.location.href}
-            </Typography>
-          </DialogTitle>
+        <Dialog fullScreen fullWidth open={showModal} onClose={showQRCode}>
+          <DialogTitle>QR Code</DialogTitle>
           <DialogContent>
-            <Box display="flex">
-              <QRCode />
+            <Box display="flex" justifyContent="center" mb={4}>
+              <QRCode text={window.location.href} />
             </Box>
+            <DownloadCard />
+            <ShareCard />
           </DialogContent>
           <DialogActions>
-            <Button onClick={showQRCode}>Close</Button>
+            <Button variant="contained" onClick={showQRCode}>
+              Close
+            </Button>
           </DialogActions>
         </Dialog>
       </Box>

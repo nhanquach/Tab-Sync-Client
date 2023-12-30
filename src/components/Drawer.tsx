@@ -15,6 +15,7 @@ import {
 import QRCode from "./QRCode";
 import DownloadCard from "./DownloadCard";
 import { TABS_VIEWS } from "../interfaces/iView";
+import ShareCard from "./ShareCard";
 
 interface IDrawerProps {
   view: string;
@@ -43,7 +44,7 @@ const Drawer: React.FC<IDrawerProps> = ({ view, setView }) => {
         }}
         open
       >
-        <Box pt={8}>
+        <Box pt={2}>
           <List>
             <ListItemButton
               sx={{ mb: 2 }}
@@ -65,12 +66,15 @@ const Drawer: React.FC<IDrawerProps> = ({ view, setView }) => {
               </ListItemIcon>
               <ListItemText primary="Archived tabs" />
             </ListItemButton>
-            <Divider sx={{ pt: 6 }} />
+            <Divider sx={{ pt: 0 }} />
             <ListItem>
               <DownloadCard small />
             </ListItem>
             <ListItem sx={{ justifyContent: "center", display: "flex" }}>
               <QRCode width={200} height={200} text="TabSync on your phone" />
+            </ListItem>
+            <ListItem>
+              <ShareCard small/>
             </ListItem>
           </List>
         </Box>

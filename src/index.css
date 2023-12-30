@@ -117,11 +117,11 @@
   }
 }
 
-.MuiDrawer-paper .Mui-selected {
-  background-color: #8f94fb !important;
-  border-top-right-radius: 100px !important;
-  border-bottom-right-radius: 100px !important;
-  margin-right: 10px !important;
+.MuiDrawer-paper .Mui-selected,
+.MuiDrawer-paper .Mui-selected .MuiListItemIcon-root {
+  background-color: transparent !important;
+  color: #8f94fb !important;
+  font-weight: 700;
 }
 
 .bottom-navigation .circles {
@@ -136,4 +136,13 @@
 .change-password-dialog
   .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation24.MuiDialog-paper {
   background-color: transparent;
+}
+
+.share-card.small .react-share__ShareButton {
+  filter: grayscale(0.8);
+  transition: all 1000ms;
+}
+
+.share-card.small .react-share__ShareButton:hover {
+  filter: none;
 }

@@ -59,11 +59,13 @@ const SignIn: React.FC<ISignInProps> = ({
     }
 
     setMessage({ type: message.type, text: "" });
+    setIsLoading(true);
     await onResetPassword({ email });
     setMessage({
       type: "info",
       text: "Check your email for a link to reset your password",
     });
+    setIsLoading(false);
   };
 
   return (

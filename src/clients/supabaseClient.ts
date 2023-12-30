@@ -5,6 +5,7 @@ import { TABLES } from "./constants";
 import { ITabSyncSettings } from "../interfaces/TabSyncSettings";
 import { ITab } from "../interfaces/iTab";
 import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
+import { HOME_PAGE } from "../utils/constants";
 
 const rootClient = createClient(
   process.env.REACT_APP_SUPABASE_URL!,
@@ -144,7 +145,9 @@ export const changePassword = async ({
 };
 
 export const resetPassword = async ({ email }: { email: string }) => {
-  return rootClient?.auth.resetPasswordForEmail(email);
+  return rootClient?.auth.resetPasswordForEmail(email, {
+    redirectTo: `${HOME_PAGE}/forgot-password`,
+  });
 };
 
 export const getOpenTabs = async (

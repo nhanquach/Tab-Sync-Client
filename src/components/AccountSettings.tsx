@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import {
   KeyTwoTone,
@@ -45,7 +45,9 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(
+    window.location.pathname === "/forgot-password"
+  );
   const [isLogingOut, setIsLogingOut] = useState(false);
   const [accountSettingsAchorEl, setAccountSettingsAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -58,7 +60,9 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
     setAccountSettingsAnchorEl(null);
   };
 
-  const firstChar = user?.email?.charAt(0);
+  const firstChar = useMemo(() => {
+    return user?.email?.charAt(0);
+  }, [user]);
 
   const handleOpenChangePasswordDialog = () => {
     setOpen(true);
@@ -66,6 +70,10 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
 
   const handleCloseChangePasswordDialog = () => {
     setOpen(false);
+
+    if (window.location.pathname === "/forgot-password") {
+      window.location.replace("/");
+    }
   };
 
   const handleLogOut = () => {
@@ -159,20 +167,6 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
         <ChangePasswordForm
           handleCloseChangePasswordDialog={handleCloseChangePasswordDialog}
         />
-
-        {/* <DialogActions>
-          <Button onClick={handleCloseChangePasswordDialog}>Close</Button>
-
-          <Button
-            variant="contained"
-            // fullWidth
-            onClick={() => {}}
-            //   disabled={}
-          >
-            Change password
-            {isLoading ? <CircularProgress size={20} /> : "Change password"}
-          </Button>
-        </DialogActions> */}
       </Dialog>
     </>
   );
