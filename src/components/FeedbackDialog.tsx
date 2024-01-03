@@ -42,7 +42,13 @@ const FeedbackDialog = () => {
 
   return (
     <>
-      <Button onClick={handleOpenFeedback} size="small">
+      <Button
+        onClick={handleOpenFeedback}
+        size="small"
+        sx={{
+          minWidth: { xs: "50px", md: "auto" },
+        }}
+      >
         <FeedbackTwoTone />
         <Typography
           sx={{

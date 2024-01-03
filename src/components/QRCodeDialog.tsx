@@ -34,6 +34,7 @@ const QRCodeDialog = (props: Props) => {
         onClick={showQRCode}
         sx={{
           display: { xs: "flex", md: "none" },
+          minWidth: { xs: "50px", md: "auto" },
         }}
       >
         <QrCode2TwoTone />
@@ -66,7 +67,7 @@ const QRCodeDialog = (props: Props) => {
           <ShareCard />
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={showQRCode}>
+          <Button variant="text" onClick={closeQRCode}>
             Close
           </Button>
         </DialogActions>
