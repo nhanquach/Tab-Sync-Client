@@ -9,11 +9,8 @@ import {
   CardHeader,
   Grid,
   IconButton,
-  Link,
   Tooltip,
-  Typography,
 } from "@mui/material";
-import dayjs from "dayjs";
 import {
   ArchiveTwoTone,
   DeleteForeverTwoTone,
@@ -22,8 +19,8 @@ import {
 
 import { ITab } from "../interfaces/iTab";
 
-import styles from "../styles/UrlGrid.module.css";
 import { TABS_VIEWS } from "../interfaces/iView";
+import TabItem from "./TabItem";
 
 interface IUrlGridProps {
   view: TABS_VIEWS;
@@ -84,67 +81,7 @@ const UrlGrid: React.FC<IUrlGridProps> = ({ onClear, urls, view }) => {
             <CardContent>
               <Grid container spacing={2} alignItems="stretch">
                 {tabs.map((tab: ITab) => {
-                  return (
-                    <Grid
-                      item
-                      alignSelf="stretch"
-                      xs={12}
-                      sm={6}
-                      md={4}
-                      lg={3}
-                      key={tab.id}
-                    >
-                      <Link
-                        underline="hover"
-                        color="inherit"
-                        href={tab.url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <Tooltip
-                          enterDelay={1000}
-                          classes={{ tooltip: styles["url-detail-tooltip"] }}
-                          title={
-                            <>
-                              <Typography variant="subtitle2">
-                                {tab.url}
-                              </Typography>
-
-                              <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                                opened on{" "}
-                                {dayjs(tab.timeStamp).format(
-                                  "DD-MMM-YYYY HH:mm:ss"
-                                )}
-                              </Typography>
-                            </>
-                          }
-                        >
-                          <Card sx={{ height: "100%", borderRadius: 4 }} variant="outlined">
-                            <CardContent>
-                              <img
-                                src={tab.favIconUrl}
-                                height={30}
-                                width={30}
-                                style={{ minWidth: 30 }}
-                                alt="favicon"
-                              />
-                              <Box
-                                display="flex"
-                                flexDirection="column"
-                                gap={1}
-                                flex={1}
-                                minWidth={0}
-                              >
-                                <Typography fontWeight={600}>
-                                  {tab.title}
-                                </Typography>
-                              </Box>
-                            </CardContent>
-                          </Card>
-                        </Tooltip>
-                      </Link>
-                    </Grid>
-                  );
+                  return <TabItem key={tab.id} tab={tab} layout="grid" />;
                 })}
               </Grid>
             </CardContent>

@@ -8,6 +8,7 @@ import {
   ListAltTwoTone,
   TimelineTwoTone,
   SortByAlphaTwoTone,
+  WebTwoTone,
 } from "@mui/icons-material";
 import {
   Box,
@@ -22,6 +23,8 @@ import {
   MenuItem,
   ListItemIcon,
   useTheme,
+  Divider,
+  useMediaQuery,
 } from "@mui/material";
 import { useKeyPress } from "../hooks/useKeyPress";
 
@@ -40,6 +43,8 @@ interface IToolbarProps {
   layout: TLayout;
   toggleOrderBy(): void;
   orderBy: TOrderBy;
+  showThisWebsite: boolean;
+  setShowThisWebsite(shouldShow: boolean): void;
 }
 
 const Toolbar: React.FC<IToolbarProps> = ({
@@ -54,11 +59,15 @@ const Toolbar: React.FC<IToolbarProps> = ({
   layout,
   toggleOrderBy,
   orderBy,
+  showThisWebsite,
+  setShowThisWebsite,
 }) => {
   const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   const searchBoxRef = useRef<HTMLInputElement>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -68,11 +77,15 @@ const Toolbar: React.FC<IToolbarProps> = ({
     setAnchorEl(null);
   };
 
-  const onKeyPress = (e: any) => {
+  const onSearchHotKeyPress = (e: any) => {
     searchBoxRef.current?.focus();
   };
 
-  useKeyPress({ keys: ["k"], callback: onKeyPress, isCombinedWithCtrl: true });
+  useKeyPress({
+    keys: ["k"],
+    callback: onSearchHotKeyPress,
+    isCombinedWithCtrl: true,
+  });
 
   const handleSelectDisplayBrowsers = (browser: string) => {
     if (displayedBrowsers.includes(browser)) {
@@ -82,22 +95,21 @@ const Toolbar: React.FC<IToolbarProps> = ({
     }
   };
 
-  return (
-    <>
-      {/* Display on Desktop */}
+  const handleSetShowThisWebsite = () => {
+    setShowThisWebsite(!showThisWebsite);
+  };
+
+  if (isLargeScreen) {
+    return (
       <Box display="flex" gap={1} mt={1}>
-        <Tooltip
-          title="Refresh"
-          sx={{
-            display: { xs: "none", md: "flex" },
-          }}
-        >
+        <Tooltip title="Refresh">
           <IconButton onClick={handleRefresh}>
             {isLoading ? <CircularProgress size={20} /> : <RefreshTwoTone />}
           </IconButton>
         </Tooltip>
         <TextField
           inputRef={searchBoxRef}
+          id="search-text-field"
           size="small"
           type="text"
           label={
@@ -126,15 +138,10 @@ const Toolbar: React.FC<IToolbarProps> = ({
           onChange={handleSearch}
           fullWidth
         />
-        <Tooltip
-          title="Device Filters"
-          sx={{
-            display: { xs: "none", md: "flex" },
-          }}
-        >
+        <Tooltip title="Device Filters">
           <IconButton
-            id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
+            id="select-devices-button"
+            aria-controls={open ? "select-devices-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
@@ -143,7 +150,7 @@ const Toolbar: React.FC<IToolbarProps> = ({
           </IconButton>
         </Tooltip>
         <Menu
-          id="filter-menu"
+          id="select-devices-menu"
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
@@ -157,9 +164,6 @@ const Toolbar: React.FC<IToolbarProps> = ({
           transformOrigin={{
             vertical: "top",
             horizontal: "right",
-          }}
-          sx={{
-            display: { xs: "none", md: "flex" },
           }}
         >
           <MenuList>
@@ -183,31 +187,66 @@ const Toolbar: React.FC<IToolbarProps> = ({
                 </MenuItem>
               );
             })}
+            <Divider />
+            <MenuItem key="this-website" onClick={handleSetShowThisWebsite}>
+              <ListItemIcon>{showThisWebsite && <CheckTwoTone />}</ListItemIcon>
+              <ListItemText>
+                <Box display="flex" gap={1} alignItems="center">
+                  <WebTwoTone />
+                  This website
+                </Box>
+              </ListItemText>
+            </MenuItem>
           </MenuList>
         </Menu>
-        <Tooltip
-          title="Change layouts"
-          sx={{
-            display: { xs: "none", md: "flex" },
-          }}
-        >
+        <Tooltip title="Change layouts">
           <IconButton onClick={toggleLayout}>
             {layout === "grid" ? <Grid3x3TwoTone /> : <ListAltTwoTone />}
           </IconButton>
         </Tooltip>
-        <Tooltip
-          title="Order by Time / Alphabet"
-          sx={{
-            display: { xs: "none", md: "flex" },
-          }}
-        >
+        <Tooltip title="Order by Time / Alphabet">
           <IconButton onClick={toggleOrderBy}>
             {orderBy === "time" ? <TimelineTwoTone /> : <SortByAlphaTwoTone />}
           </IconButton>
         </Tooltip>
       </Box>
+    );
+  }
 
-      {/* Display on Mobile */}
+  return (
+    <>
+      <TextField
+        inputRef={searchBoxRef}
+        id="search-text-field"
+        size="small"
+        type="text"
+        label={
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "inherit",
+            }}
+          >
+            <Typography>Find your tabs</Typography>
+            <Box
+              ml={1}
+              px={2}
+              bgcolor={theme.palette.primary.main}
+              color="white"
+              borderRadius={1}
+            >
+              ⌘K
+            </Box>
+          </Box>
+        }
+        variant="outlined"
+        value={searchString}
+        onChange={handleSearch}
+        fullWidth
+      />
+
       <Box
         gap={1}
         mt={1}
@@ -270,6 +309,16 @@ const Toolbar: React.FC<IToolbarProps> = ({
                 </MenuItem>
               );
             })}
+            <Divider />
+            <MenuItem key="this-website" onClick={handleSetShowThisWebsite}>
+              <ListItemIcon>{showThisWebsite && <CheckTwoTone />}</ListItemIcon>
+              <ListItemText>
+                <Box display="flex" gap={1} alignItems="center">
+                  <WebTwoTone />
+                  This website
+                </Box>
+              </ListItemText>
+            </MenuItem>
           </MenuList>
         </Menu>
         <Tooltip title="Change layouts">

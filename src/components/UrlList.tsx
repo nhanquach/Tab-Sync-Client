@@ -1,5 +1,4 @@
 import React from "react";
-import dayjs from "dayjs";
 // @ts-ignore
 import groupBy from "lodash.groupby";
 
@@ -9,7 +8,6 @@ import {
   CardContent,
   CardHeader,
   IconButton,
-  Link,
   Tooltip,
 } from "@mui/material";
 import {
@@ -20,6 +18,7 @@ import {
 
 import { ITab } from "../interfaces/iTab";
 import { TABS_VIEWS } from "../interfaces/iView";
+import TabItem from "./TabItem";
 
 interface IUrlListProps {
   view: TABS_VIEWS;
@@ -79,61 +78,7 @@ const UrlList: React.FC<IUrlListProps> = ({ onClear, urls, view }) => {
             />
             <CardContent>
               {tabs.map((tab: ITab) => {
-                return (
-                  <Box
-                    key={tab.id}
-                    display="flex"
-                    alignItems="flex-start"
-                    gap={2}
-                  >
-                    <img
-                      src={tab.favIconUrl}
-                      height={30}
-                      width={30}
-                      style={{ minWidth: 30 }}
-                      alt="favicon"
-                    />
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      gap={1}
-                      flex={1}
-                      minWidth={0}
-                    >
-                      <Link
-                        underline="hover"
-                        color="inherit"
-                        href={tab.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        fontWeight={700}
-                      >
-                        {tab.title}
-                      </Link>
-                      <Box
-                        sx={{
-                          flex: 1,
-                          width: "100%",
-                          fontSize: 14,
-                          overflow: "auto",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {tab.url}
-                      </Box>
-                      <div
-                        style={{
-                          fontStyle: "italic",
-                          fontSize: 14,
-                        }}
-                      >
-                        opened on{" "}
-                        {dayjs(tab.timeStamp).format("DD-MMM-YYYY HH:mm:ss")}
-                      </div>
-                      <Box my={1} />
-                    </Box>
-                  </Box>
-                );
+                return <TabItem tab={tab} key={tab.id} layout="list" />;
               })}
             </CardContent>
           </Card>

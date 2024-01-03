@@ -133,11 +133,6 @@
   height: 0 !important;
 }
 
-.change-password-dialog
-  .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation24.MuiDialog-paper {
-  background-color: transparent;
-}
-
 .share-card.small .react-share__ShareButton {
   filter: grayscale(0.8);
   transition: all 1000ms;

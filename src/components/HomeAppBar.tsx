@@ -6,12 +6,8 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  Button,
   useTheme,
 } from "@mui/material";
-import {
-  QrCode2TwoTone,
-} from "@mui/icons-material";
 
 import { drawerWidth } from "../utils/dimensions";
 
@@ -19,18 +15,14 @@ import Logo from "./Logo";
 import { User } from "@supabase/supabase-js";
 import FeedbackDialog from "./FeedbackDialog";
 import AccountSettings from "./AccountSettings";
+import QRCodeDialog from "./QRCodeDialog";
 
 interface IHomeAppBarProps {
   user?: User;
-  toggleQRCode: () => void;
   onSignOut: () => void;
 }
 
-const HomeAppBar: React.FC<IHomeAppBarProps> = ({
-  user,
-  toggleQRCode,
-  onSignOut,
-}) => {
+const HomeAppBar: React.FC<IHomeAppBarProps> = ({ user, onSignOut }) => {
   const theme = useTheme();
 
   return (
@@ -59,18 +51,10 @@ const HomeAppBar: React.FC<IHomeAppBarProps> = ({
             component="div"
             sx={{ flexGrow: 1, color: theme.palette.primary.main }}
           >
-            Tab Sync
+            TabSync
           </Typography>
           <Box display="flex" gap={1}>
-            <Button
-              size="small"
-              sx={{
-                display: { xs: "flex", md: "none" },
-              }}
-              onClick={toggleQRCode}
-            >
-              <QrCode2TwoTone />
-            </Button>
+            <QRCodeDialog />
             <FeedbackDialog />
             <AccountSettings user={user} onSignOut={onSignOut} />
           </Box>

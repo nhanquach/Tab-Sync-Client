@@ -33,10 +33,9 @@ import HomeAppBar from "../components/HomeAppBar";
 interface IHomeProps {
   user?: any;
   onSignOut: () => void;
-  toggleQRCode: () => void;
 }
 
-const Home: React.FC<IHomeProps> = ({ user, onSignOut, toggleQRCode }) => {
+const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [view, setView] = useState<TABS_VIEWS>(TABS_VIEWS.OPEN_TABS);
 
@@ -45,6 +44,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut, toggleQRCode }) => {
 
   const [searchString, setSearchString] = useState<string>("");
   const [displayedBrowsers, setDisplayedBrowsers] = useState<string[]>([]);
+  const [showThisWebsite, setShowThisWebsite] = useState<boolean>(false);
 
   const [layout, setLayout] = useState<TLayout>("list");
   const [orderBy, setOrderBy] = useState<TOrderBy>("time");
@@ -75,6 +75,12 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut, toggleQRCode }) => {
       );
     }
 
+    if (!showThisWebsite) {
+      displayedTabs = displayedTabs.filter(
+        (tab) => tab.url !== window.location.href
+      );
+    }
+
     return displayedTabs.sort(
       orderBy === "time" ? sortByTimeStamp : sortByTitle
     );
@@ -85,6 +91,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut, toggleQRCode }) => {
     displayedBrowsers,
     searchString,
     orderBy,
+    showThisWebsite,
   ]);
 
   const handleGetOpenTabs = async () => {
@@ -230,11 +237,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut, toggleQRCode }) => {
 
   return (
     <>
-      <HomeAppBar
-        user={user}
-        onSignOut={handleSignOut}
-        toggleQRCode={toggleQRCode}
-      />
+      <HomeAppBar user={user} onSignOut={handleSignOut} />
 
       <Drawer view={view} setView={setView} />
 
@@ -250,6 +253,8 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut, toggleQRCode }) => {
         layout={layout}
         toggleOrderBy={toggleOrderBy}
         orderBy={orderBy}
+        showThisWebsite={showThisWebsite}
+        setShowThisWebsite={setShowThisWebsite}
       />
 
       {isLoading && (
@@ -291,7 +296,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut, toggleQRCode }) => {
 
       {!isOpenTabsView && !isLoading && (
         <Typography textAlign="center" color="#696969">
-          Tab Sync was created to make your browsers hopping a breeze, since all
+          TabSync was created to make your browsers hopping a breeze, since all
           your tabs are synced.
           <br />
           Happing browsing

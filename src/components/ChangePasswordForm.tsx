@@ -78,15 +78,19 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = ({
           <FormControl fullWidth sx={{ mt: 2 }}>
             <TextField
               sx={{ mt: 1 }}
+              id="new-password"
               type="password"
               label="New password"
+              autoComplete="new-password"
               value={newPassword}
               onChange={handleNewPasswordChange}
             />
             <TextField
               sx={{ mt: 3 }}
+              id="repeated-new-password"
               type="password"
               label="Repeat the new password"
+              autoComplete="new-password"
               value={repeatedNewPassword}
               onChange={handleRepeatedNewPasswordChange}
             />

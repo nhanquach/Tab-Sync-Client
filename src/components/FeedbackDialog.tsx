@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { sendFeedback } from "../clients/supabaseClient";
 import FeedbackForm from "./FeedbackForm";
+import TransitionComponent from "./TransitionComponent";
 
 const FeedbackDialog = () => {
   const [open, setOpen] = React.useState(false);
@@ -53,10 +54,11 @@ const FeedbackDialog = () => {
         </Typography>
       </Button>
       <Dialog
+        fullWidth
         fullScreen={fullScreen}
         open={open}
         onClose={handleCloseFeedback}
-        fullWidth
+        TransitionComponent={TransitionComponent}
       >
         <DialogTitle sx={{ display: "flex", alignItems: "center" }}>
           <FeedbackTwoTone sx={{ color: theme.palette.primary.main, mr: 1 }} />

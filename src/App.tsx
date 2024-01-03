@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Button,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -21,15 +16,10 @@ import SignUp from "./pages/SignUp";
 
 import { ROUTES } from "./routes";
 import Home from "./pages/Home";
-import QRCode from "./components/QRCode";
 import LiveBackground from "./components/LiveBackground";
 import { drawerWidth } from "./utils/dimensions";
-import DownloadCard from "./components/DownloadCard";
-import ShareCard from "./components/ShareCard";
 
 function App() {
-  const [showModal, setShowModal] = useState(false);
-
   const [view, setView] = useState<ROUTES>(ROUTES.SIGN_IN);
 
   const [user, setUser] = useState<User>();
@@ -96,10 +86,6 @@ function App() {
     await resetPassword({ email });
   };
 
-  const showQRCode = () => {
-    setShowModal(!showModal);
-  };
-
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   const theme = React.useMemo(
@@ -152,30 +138,11 @@ function App() {
 
             {view === ROUTES.HOME && (
               <Box pb={8}>
-                <Home
-                  user={user}
-                  onSignOut={onSignOut}
-                  toggleQRCode={showQRCode}
-                />
+                <Home user={user} onSignOut={onSignOut} />
               </Box>
             )}
           </Container>
         </div>
-        <Dialog fullScreen fullWidth open={showModal} onClose={showQRCode}>
-          <DialogTitle>QR Code</DialogTitle>
-          <DialogContent>
-            <Box display="flex" justifyContent="center" mb={4}>
-              <QRCode text={window.location.href} />
-            </Box>
-            <DownloadCard />
-            <ShareCard />
-          </DialogContent>
-          <DialogActions>
-            <Button variant="contained" onClick={showQRCode}>
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Box>
     </ThemeProvider>
   );

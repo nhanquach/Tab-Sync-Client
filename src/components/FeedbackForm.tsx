@@ -120,7 +120,7 @@ const FeedbackForm: React.FC<IFeedbackProps> = ({ sendFeedback }) => {
       <Box color={theme.palette.secondary.main} my={2}>
         <Typography textAlign="center">
           Need more help?&nbsp;
-          <Link href="mailto:qtrongnhan+tabsync+support@gmail.com?subject=[Tab Sync]">
+          <Link href="mailto:qtrongnhan+tabsync+support@gmail.com?subject=[TabSync]">
             Contact us via email
           </Link>
         </Typography>

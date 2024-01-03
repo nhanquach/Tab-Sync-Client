@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 
+import { User } from "@supabase/supabase-js";
 import {
   KeyTwoTone,
   ExitToAppTwoTone,
@@ -16,22 +17,11 @@ import {
   useTheme,
   Dialog,
   DialogTitle,
-  Slide,
   useMediaQuery,
 } from "@mui/material";
-import { User } from "@supabase/supabase-js";
 
-import { TransitionProps } from "@mui/material/transitions";
 import ChangePasswordForm from "./ChangePasswordForm";
-
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement;
-  },
-  ref: React.Ref<unknown>
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+import TransitionComponent from "./TransitionComponent";
 
 interface IAccountSettingsProps {
   user?: User;
@@ -140,12 +130,7 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
         fullWidth
         open={open}
         onClose={handleCloseChangePasswordDialog}
-        TransitionComponent={Transition}
-        sx={{
-          backdropFilter: "blur(8px)",
-          backgroundColor: "transparent",
-        }}
-        className="change-password-dialog"
+        TransitionComponent={TransitionComponent}
       >
         <DialogTitle sx={{ display: "flex", alignItems: "center" }}>
           <KeyTwoTone sx={{ color: theme.palette.primary.main, mr: 1 }} />
