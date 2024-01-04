@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Typography } from "@mui/material";
+
 import {
   getOpenTabs,
   getArchivedTabs,
@@ -10,18 +12,6 @@ import {
 import UrlList from "../components/UrlList";
 import { ITab } from "../interfaces/iTab";
 import { TABS_VIEWS } from "../interfaces/iView";
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Box,
-  Paper,
-  Typography,
-} from "@mui/material";
-import {
-  ArchiveTwoTone,
-  CloudSyncTwoTone,
-  LightbulbCircleTwoTone,
-} from "@mui/icons-material";
 import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
 import { sortByTimeStamp } from "../utils/sortByTimeStamp";
 import UrlGrid from "../components/UrlGrid";
@@ -29,6 +19,9 @@ import { sortByTitle } from "../utils/sortByTitle";
 import Drawer from "../components/Drawer";
 import Toolbar, { TLayout, TOrderBy } from "../components/Toolbar";
 import HomeAppBar from "../components/HomeAppBar";
+import NoData from "../components/NoData";
+import TipsFooter from "../components/TipsFooter";
+import MobileBottomNavigationBar from "../components/MobileBottomNavigationBar";
 
 interface IHomeProps {
   user?: any;
@@ -238,9 +231,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
   return (
     <>
       <HomeAppBar user={user} onSignOut={handleSignOut} />
-
       <Drawer view={view} setView={setView} />
-
       <Toolbar
         isLoading={isLoading}
         handleRefresh={handleRefresh}
@@ -256,21 +247,22 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
         showThisWebsite={showThisWebsite}
         setShowThisWebsite={setShowThisWebsite}
       />
-
       {isLoading && (
-        <Box
-          display="flex"
-          justifyContent="center"
-          mt={6}
-          alignItems="center"
-          gap={2}
+        <Typography
+          my={12}
+          textAlign={{ xs: "center", md: "justify" }}
           color="#696969"
+          variant="h5"
         >
-          Getting your tabs...
-        </Box>
+          Getting your tabs ...
+        </Typography>
       )}
 
-      {!isLoading && layout === "list" && (
+      {!isLoading && urls.length === 0 && (
+        <NoData isEmptySearch={!!searchString} />
+      )}
+
+      {!isLoading && urls.length > 0 && layout === "list" && (
         <UrlList
           view={view}
           urls={urls}
@@ -278,7 +270,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
         />
       )}
 
-      {!isLoading && layout === "grid" && (
+      {!isLoading && urls.length > 0 && layout === "grid" && (
         <UrlGrid
           view={view}
           urls={urls}
@@ -286,71 +278,8 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
         />
       )}
 
-      {!isLoading && (
-        <LightbulbCircleTwoTone
-          fontSize="large"
-          sx={{ display: "flex", width: "100%", my: 2 }}
-          color="primary"
-        />
-      )}
-
-      {!isOpenTabsView && !isLoading && (
-        <Typography textAlign="center" color="#696969">
-          TabSync was created to make your browsers hopping a breeze, since all
-          your tabs are synced.
-          <br />
-          Happing browsing
-        </Typography>
-      )}
-
-      {isOpenTabsView && !isLoading && (
-        <Typography textAlign="center" color="#696969">
-          <span>
-            <b>Tip</b>: If your tabs are not showing up, one possible reason is
-            that you are signed out of the extension.
-            <br />
-            To check, click on the extension icon in your browser toolbar and
-            sign in.
-          </span>
-        </Typography>
-      )}
-
-      <Paper
-        sx={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          display: { md: "none" },
-        }}
-        elevation={3}
-        className="bottom-navigation"
-      >
-        <ul className="circles">
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-        </ul>
-        <BottomNavigation
-          showLabels
-          value={view}
-          onChange={(_event, newValue) => {
-            setView(newValue);
-          }}
-        >
-          <BottomNavigationAction
-            value="open_tabs"
-            label="Open tabs"
-            icon={<CloudSyncTwoTone />}
-          />
-          <BottomNavigationAction
-            value="archived_tabs"
-            label="Archived tabs"
-            icon={<ArchiveTwoTone />}
-          />
-        </BottomNavigation>
-      </Paper>
+      <TipsFooter isOpenTabsView={isOpenTabsView} />
+      <MobileBottomNavigationBar view={view} setView={setView} />
     </>
   );
 };

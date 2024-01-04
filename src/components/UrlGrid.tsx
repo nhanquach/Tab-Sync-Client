@@ -10,11 +10,11 @@ import {
   Grid,
   IconButton,
   Tooltip,
+  useTheme,
 } from "@mui/material";
 import {
   ArchiveTwoTone,
   DeleteForeverTwoTone,
-  PhonelinkTwoTone,
 } from "@mui/icons-material";
 
 import { ITab } from "../interfaces/iTab";
@@ -29,29 +29,10 @@ interface IUrlGridProps {
 }
 
 const UrlGrid: React.FC<IUrlGridProps> = ({ onClear, urls, view }) => {
+  const theme = useTheme();
+
   const groupByBrowser = groupBy(urls, "deviceName");
   const browsers = Object.keys(groupByBrowser);
-
-  if (urls.length === 0) {
-    return (
-      <Box
-        mt={8}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <PhonelinkTwoTone sx={{ fontSize: 100, color: "#d3d3d3" }} />
-        <p>
-          No tab was found, continue browsing from your computers or phones.
-        </p>
-        <p>Your open tabs will be shown here.</p>
-        <hr />
-        <p>Still can't see your tabs? Check if you are signed out.</p>
-      </Box>
-    );
-  }
 
   return (
     <Box my={2}>
@@ -64,6 +45,7 @@ const UrlGrid: React.FC<IUrlGridProps> = ({ onClear, urls, view }) => {
             sx={{ mb: 2, wordBreak: "break-word", border: 0 }}
           >
             <CardHeader
+              sx={{ borderBottom: `0.5px solid ${theme.palette.grey[400]}` }}
               title={name || "Unknown ¯\\_(ツ)_/¯ "}
               action={
                 <Box>

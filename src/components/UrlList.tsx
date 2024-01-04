@@ -13,7 +13,6 @@ import {
 import {
   ArchiveTwoTone,
   DeleteForeverTwoTone,
-  PhonelinkTwoTone,
 } from "@mui/icons-material";
 
 import { ITab } from "../interfaces/iTab";
@@ -29,27 +28,6 @@ interface IUrlListProps {
 const UrlList: React.FC<IUrlListProps> = ({ onClear, urls, view }) => {
   const groupByBrowser = groupBy(urls, "deviceName");
   const browsers = Object.keys(groupByBrowser);
-
-  if (urls.length === 0) {
-    return (
-      <Box
-        mt={8}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <PhonelinkTwoTone sx={{ fontSize: 100, color: "#d3d3d3" }} />
-        <p>
-          No tab was found, continue browsing from your computers or phones.
-        </p>
-        <p>Your open tabs will be shown here.</p>
-        <hr />
-        <p>Still can't see your tabs? Check if you are signed out.</p>
-      </Box>
-    );
-  }
 
   return (
     <Box my={2}>
