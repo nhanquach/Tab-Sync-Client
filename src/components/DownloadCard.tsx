@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 import { Button, Card, CardContent, Typography } from "@mui/material";
 
@@ -51,4 +51,4 @@ const DownloadCard: React.FC<IDownLoadCardProps> = ({ small }) => {
   );
 };
 
-export default DownloadCard;
+export default memo(DownloadCard);

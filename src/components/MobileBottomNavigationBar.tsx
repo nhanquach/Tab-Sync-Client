@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { CloudSyncTwoTone, ArchiveTwoTone } from "@mui/icons-material";
 import { Paper, BottomNavigation, BottomNavigationAction } from "@mui/material";
 
@@ -9,7 +9,7 @@ interface IMobileBottomNavigationBarProps {
   setView: (view: TABS_VIEWS) => void;
 }
 
-const LiteLiveBackground = () => {
+const LiteLiveBackground = memo(() => {
   return (
     <ul className="circles">
       <li></li>
@@ -18,7 +18,7 @@ const LiteLiveBackground = () => {
       <li></li>
     </ul>
   );
-};
+});
 
 const MobileBottomNavigationBar: React.FC<IMobileBottomNavigationBarProps> = ({
   view,
@@ -41,6 +41,11 @@ const MobileBottomNavigationBar: React.FC<IMobileBottomNavigationBarProps> = ({
         value={view}
         onChange={(_event, newValue) => {
           setView(newValue);
+        }}
+        sx={{
+          position: "relative",
+          zIndex: 10,
+          background: "transparent",
         }}
       >
         <BottomNavigationAction

@@ -83,7 +83,7 @@ function App() {
   };
 
   const onResetPassword = async ({ email }: { email: string }) => {
-    await resetPassword({ email });
+    return await resetPassword({ email });
   };
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");

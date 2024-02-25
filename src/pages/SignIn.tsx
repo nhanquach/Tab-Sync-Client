@@ -7,6 +7,7 @@ import DownloadCard from "../components/DownloadCard";
 import AboutAccordion from "../components/AboutAccordion";
 import QRCode from "../components/QRCode";
 import SignInForm from "../components/SignInForm";
+import { AuthError } from "@supabase/supabase-js";
 
 interface ISignInProps {
   signIn: ({
@@ -16,7 +17,16 @@ interface ISignInProps {
     email: string;
     password: string;
   }) => Promise<{ error: string }>;
-  onResetPassword: ({ email }: { email: string }) => void;
+  onResetPassword: ({ email }: { email: string }) => Promise<
+    | {
+        data: {};
+        error: null;
+      }
+    | {
+        data: null;
+        error: AuthError;
+      }
+  >;
   setView: (view: ROUTES) => void;
 }
 
@@ -60,6 +70,7 @@ const SignIn: React.FC<ISignInProps> = ({
 
     setMessage({ type: message.type, text: "" });
     setIsLoading(true);
+
     await onResetPassword({ email });
     setMessage({
       type: "info",
