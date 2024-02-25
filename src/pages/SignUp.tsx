@@ -7,6 +7,7 @@ import AboutAccordion from "../components/AboutAccordion";
 import DownloadCard from "../components/DownloadCard";
 import QRCode from "../components/QRCode";
 import SignUpForm from "../components/SignUpForm";
+import { isMobile } from "../utils/isMobile";
 
 interface ISignUpProps {
   signUp: ({
@@ -20,6 +21,7 @@ interface ISignUpProps {
 }
 
 const SignUp: React.FC<ISignUpProps> = ({ signUp, setView }) => {
+  const isMobileApp = isMobile();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -63,12 +65,14 @@ const SignUp: React.FC<ISignUpProps> = ({ signUp, setView }) => {
             setView={setView}
           />
         </Grid2>
-        <Grid2 md={4} sm={12} alignItems="center">
-          <Box display="flex" flexDirection={"column"} alignItems="center">
-            <DownloadCard />
-            <QRCode width={200} height={200} text="TabSync on your phone" />
-          </Box>
-        </Grid2>
+        {!isMobileApp && (
+          <Grid2 md={4} sm={12} alignItems="center">
+            <Box display="flex" flexDirection={"column"} alignItems="center">
+              <DownloadCard />
+              <QRCode width={200} height={200} text="TabSync on your phone" />
+            </Box>
+          </Grid2>
+        )}
       </Grid2>
       <AboutAccordion />
     </Container>

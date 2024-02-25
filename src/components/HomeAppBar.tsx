@@ -16,6 +16,7 @@ import { User } from "@supabase/supabase-js";
 import FeedbackDialog from "./FeedbackDialog";
 import AccountSettings from "./AccountSettings";
 import QRCodeDialog from "./QRCodeDialog";
+import { isMobile } from "../utils/isMobile";
 
 interface IHomeAppBarProps {
   user?: User;
@@ -23,6 +24,7 @@ interface IHomeAppBarProps {
 }
 
 const HomeAppBar: React.FC<IHomeAppBarProps> = ({ user, onSignOut }) => {
+  const isMobileApp = isMobile();
   const theme = useTheme();
 
   return (
@@ -35,6 +37,7 @@ const HomeAppBar: React.FC<IHomeAppBarProps> = ({ user, onSignOut }) => {
           backdropFilter: "blur(8px)",
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
+          paddingTop: isMobileApp ? "25px" : "0",
         }}
       >
         <Toolbar>

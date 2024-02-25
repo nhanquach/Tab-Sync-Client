@@ -16,8 +16,10 @@ import {
 import { sendFeedback } from "../clients/supabaseClient";
 import FeedbackForm from "./FeedbackForm";
 import TransitionComponent from "./TransitionComponent";
+import { isMobile } from "../utils/isMobile";
 
 const FeedbackDialog = () => {
+  const isMobileApp = isMobile();
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -66,29 +68,39 @@ const FeedbackDialog = () => {
         onClose={handleCloseFeedback}
         TransitionComponent={TransitionComponent}
       >
-        <DialogTitle sx={{ display: "flex", alignItems: "center" }}>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mt: isMobileApp ? 2 : 0,
+          }}
+        >
           <FeedbackTwoTone sx={{ color: theme.palette.primary.main, mr: 1 }} />
           Your feedback fuels our fire 🔥
         </DialogTitle>
-        <IconButton
-          aria-label="close"
-          onClick={handleCloseFeedback}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseTwoTone />
-        </IconButton>
+        {!isMobileApp && (
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseFeedback}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseTwoTone />
+          </IconButton>
+        )}
         <DialogContent>
           <DialogContentText>
             <FeedbackForm sendFeedback={onSendFeedback} />
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseFeedback}>Close</Button>
+        <DialogActions sx={{ mb: isMobileApp ? 4 : 0 }}>
+          <Button fullWidth={isMobileApp} onClick={handleCloseFeedback}>
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
     </>

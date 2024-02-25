@@ -8,6 +8,7 @@ import AboutAccordion from "../components/AboutAccordion";
 import QRCode from "../components/QRCode";
 import SignInForm from "../components/SignInForm";
 import { AuthError } from "@supabase/supabase-js";
+import { isMobile } from "../utils/isMobile";
 
 interface ISignInProps {
   signIn: ({
@@ -35,6 +36,7 @@ const SignIn: React.FC<ISignInProps> = ({
   setView,
   onResetPassword,
 }) => {
+  const isMobileApp = isMobile();
   const [isLoading, setIsLoading] = useState(false);
 
   const [message, setMessage] = useState<{ type: AlertColor; text: string }>({
@@ -96,12 +98,14 @@ const SignIn: React.FC<ISignInProps> = ({
             onResetPassword={resetPassword}
           />
         </Grid2>
-        <Grid2 md={4} sm={12} alignItems="center">
-          <Box display="flex" flexDirection={"column"} alignItems="center">
-            <DownloadCard />
-            <QRCode width={200} height={200} text="TabSync on your phone" />
-          </Box>
-        </Grid2>
+        {!isMobileApp && (
+          <Grid2 md={4} sm={12} alignItems="center">
+            <Box display="flex" flexDirection={"column"} alignItems="center">
+              <DownloadCard />
+              <QRCode width={200} height={200} text="TabSync on your phone" />
+            </Box>
+          </Grid2>
+        )}
       </Grid2>
       <AboutAccordion />
     </Container>

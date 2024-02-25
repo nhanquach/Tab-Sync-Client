@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Box,
@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { changePassword } from "../clients";
+import { isMobile } from "../utils/isMobile";
 
 interface IChangePasswordFormProps {
   handleCloseChangePasswordDialog: () => void;
@@ -19,11 +20,12 @@ interface IChangePasswordFormProps {
 const ChangePasswordForm: React.FC<IChangePasswordFormProps> = ({
   handleCloseChangePasswordDialog,
 }) => {
-  const [newPassword, setNewPassword] = React.useState("");
-  const [repeatedNewPassword, setRepeatedNewPassword] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [message, setMessage] = React.useState("");
-  const [error, setError] = React.useState("");
+  const isMobileApp = isMobile();
+  const [newPassword, setNewPassword] = useState("");
+  const [repeatedNewPassword, setRepeatedNewPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleNewPasswordChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -71,6 +73,7 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = ({
         sx={{
           backdropFilter: "blur(8px)",
           backgroundColor: "transparent",
+          mt: isMobileApp ? 4 : 2
         }}
       >
         <Typography variant="h5">Change your password</Typography>
@@ -107,18 +110,36 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = ({
             )}
           </FormControl>
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCloseChangePasswordDialog}>Close</Button>
 
-        <Button
-          variant="contained"
-          onClick={handleChangePassword}
-          disabled={isLoading}
-        >
-          {isLoading ? <CircularProgress size={20} /> : "Change password"}
-        </Button>
-      </DialogActions>
+        {isMobileApp && (
+          <Box display="flex" flexDirection="column" sx={{ mt: 2, gap: 2 }}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={handleChangePassword}
+              disabled={isLoading}
+            >
+              {isLoading ? <CircularProgress size={20} /> : "Change password"}
+            </Button>
+            <Button fullWidth onClick={handleCloseChangePasswordDialog}>
+              Close
+            </Button>
+          </Box>
+        )}
+      </DialogContent>
+      {!isMobileApp && (
+        <DialogActions>
+          <Button onClick={handleCloseChangePasswordDialog}>Close</Button>
+
+          <Button
+            variant="contained"
+            onClick={handleChangePassword}
+            disabled={isLoading}
+          >
+            {isLoading ? <CircularProgress size={20} /> : "Change password"}
+          </Button>
+        </DialogActions>
+      )}
     </>
   );
 };

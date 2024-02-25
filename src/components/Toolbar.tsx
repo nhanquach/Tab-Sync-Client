@@ -27,6 +27,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useKeyPress } from "../hooks/useKeyPress";
+import { isMobile } from "../utils/isMobile";
 
 export type TLayout = "grid" | "list";
 export type TOrderBy = "time" | "title";
@@ -63,6 +64,7 @@ const Toolbar: React.FC<IToolbarProps> = ({
   setShowThisWebsite,
 }) => {
   const theme = useTheme();
+  const isMobileApp = isMobile();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   const searchBoxRef = useRef<HTMLInputElement>(null);
@@ -230,21 +232,26 @@ const Toolbar: React.FC<IToolbarProps> = ({
             }}
           >
             <Typography>Find your tabs</Typography>
-            <Box
-              ml={1}
-              px={2}
-              bgcolor={theme.palette.primary.main}
-              color="white"
-              borderRadius={1}
-            >
-              ⌘K
-            </Box>
+            {!isMobileApp && (
+              <Box
+                ml={1}
+                px={2}
+                bgcolor={theme.palette.primary.main}
+                color="white"
+                borderRadius={1}
+              >
+                ⌘K
+              </Box>
+            )}
           </Box>
         }
         variant="outlined"
         value={searchString}
         onChange={handleSearch}
         fullWidth
+        style={{
+          marginTop: isMobileApp ? "20px" : 0,
+        }}
       />
 
       <Box

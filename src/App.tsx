@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Container,
-} from "@mui/material";
+import { Box, Container } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";

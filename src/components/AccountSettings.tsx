@@ -22,6 +22,7 @@ import {
 
 import ChangePasswordForm from "./ChangePasswordForm";
 import TransitionComponent from "./TransitionComponent";
+import { isMobile } from "../utils/isMobile";
 
 interface IAccountSettingsProps {
   user?: User;
@@ -33,6 +34,7 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
   onSignOut,
 }) => {
   const theme = useTheme();
+  const isMobileApp = isMobile();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const [open, setOpen] = React.useState(
@@ -132,7 +134,13 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
         onClose={handleCloseChangePasswordDialog}
         TransitionComponent={TransitionComponent}
       >
-        <DialogTitle sx={{ display: "flex", alignItems: "center" }}>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            paddingTop: isMobileApp ? "40px" : "1",
+          }}
+        >
           <KeyTwoTone sx={{ color: theme.palette.primary.main, mr: 1 }} />
           Change password
         </DialogTitle>
@@ -142,7 +150,7 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
           sx={{
             position: "absolute",
             right: 8,
-            top: 8,
+            top: isMobileApp ? "35px" : "8px",
             color: (theme) => theme.palette.grey[500],
           }}
         >

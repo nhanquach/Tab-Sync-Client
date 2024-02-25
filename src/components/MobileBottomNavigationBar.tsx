@@ -3,6 +3,7 @@ import { CloudSyncTwoTone, ArchiveTwoTone } from "@mui/icons-material";
 import { Paper, BottomNavigation, BottomNavigationAction } from "@mui/material";
 
 import { TABS_VIEWS } from "../interfaces/iView";
+import { isMobile } from "../utils/isMobile";
 
 interface IMobileBottomNavigationBarProps {
   view: TABS_VIEWS;
@@ -24,6 +25,8 @@ const MobileBottomNavigationBar: React.FC<IMobileBottomNavigationBarProps> = ({
   view,
   setView,
 }) => {
+  const isMobileApp = isMobile();
+
   return (
     <Paper
       sx={{
@@ -32,6 +35,7 @@ const MobileBottomNavigationBar: React.FC<IMobileBottomNavigationBarProps> = ({
         left: 0,
         right: 0,
         display: { md: "none" },
+        paddingBottom: isMobileApp ? "10px" : "0",
       }}
       elevation={3}
       className="bottom-navigation"
