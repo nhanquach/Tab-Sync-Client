@@ -185,7 +185,7 @@ const Toolbar: React.FC<IToolbarProps> = ({
                   <ListItemIcon>
                     {displayedBrowsers.includes(browser) && <CheckTwoTone />}
                   </ListItemIcon>
-                  <ListItemText>{browser}</ListItemText>
+                  <ListItemText>{browser || "Unknown"}</ListItemText>
                 </MenuItem>
               );
             })}

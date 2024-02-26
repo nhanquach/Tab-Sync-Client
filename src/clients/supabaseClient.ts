@@ -196,6 +196,7 @@ export const getArchivedTabs = async (deviceName?: string) => {
 export const sendTab = async (
   tab: ITab
 ): Promise<{ data: ITab; error?: { message: string } }> => {
+  console.log("🚀 . tab:", tab);
   checkTokenExpired();
 
   const { id, url, favIconUrl = "", title, index, windowId } = tab;
@@ -213,7 +214,7 @@ export const sendTab = async (
       title,
       index,
       windowId,
-      deviceName,
+      deviceName: deviceName || tab.deviceName,
       userId,
     });
   }

@@ -8,6 +8,7 @@ import {
   onArchivedTabChange,
   archiveOpenTabs,
   removeArchivedTabs,
+  sendTab,
 } from "../clients";
 import UrlList from "../components/UrlList";
 import { ITab } from "../interfaces/iTab";
@@ -22,6 +23,7 @@ import HomeAppBar from "../components/HomeAppBar";
 import NoData from "../components/NoData";
 import TipsFooter from "../components/TipsFooter";
 import MobileBottomNavigationBar from "../components/MobileBottomNavigationBar";
+import { isHistoryApiSupported } from "../utils/isHistoryAPISupported";
 
 interface IHomeProps {
   user?: any;
@@ -193,6 +195,46 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
     const devices = Array.from(new Set(tabs.map((url) => url.deviceName)));
     setDisplayedBrowsers(devices);
   }, [tabs]);
+
+  // Send tab if is shared
+  useEffect(() => {
+    if (window.location.pathname === "/share") {
+      try {
+        const url = new URL(window.location.href);
+        const title = url.searchParams.get("title");
+        const text = url.searchParams.get("text");
+
+        const randomId = parseInt((Math.random() * 1000000).toString());
+
+        if (title && text) {
+          // Checking if text is valid URL
+          new URL(text);
+
+          // Sending tab info to server
+          sendTab({
+            id: randomId,
+            url: text,
+            favIconUrl: "",
+            title: title,
+            index: 0,
+            timeStamp: new Date().toLocaleDateString(),
+            deviceName: "TabSync Web Client",
+            windowId: "TabSync Web Client",
+          }).then(() => {
+            // redirect to home in order to prevent duplicate tabs when refreshing
+            if (isHistoryApiSupported()) {
+              window.history.pushState({}, "", "/");
+            } else {
+              window.location.replace("/");
+            }
+          });
+        }
+      } catch (e) {
+        // TODO: Display a banner/toast message
+        console.log("Is not valid url! Skipping...");
+      }
+    }
+  }, []);
 
   const handleSearch = (e: any) => {
     setSearchString(e.target.value);
