@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Typography } from "@mui/material";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Snackbar, Typography } from "@mui/material";
 
 import {
   getOpenTabs,
@@ -31,6 +31,7 @@ interface IHomeProps {
 }
 
 const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
+  const [toast, setToast] = useState({ show: false, message: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [view, setView] = useState<TABS_VIEWS>(TABS_VIEWS.OPEN_TABS);
 
@@ -89,33 +90,23 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
     showThisWebsite,
   ]);
 
-  const handleGetOpenTabs = async () => {
+  const handleGetTabs = useCallback(async () => {
     setIsLoading(true);
+    const fetchFunction = isOpenTabsView ? getOpenTabs : getArchivedTabs;
+    const setTabsFunction = isOpenTabsView ? setTabs : setArchivedTabs;
 
-    const { data: newTabs, error } = await getOpenTabs();
+    const { data: newTabs, error } = await fetchFunction();
 
     if (error) {
       console.error(error);
+      showToast("An error occurred while fetching open tabs.");
       return;
     }
 
-    setTabs(newTabs.sort(sortByTimeStamp));
+    setTabsFunction(newTabs.sort(sortByTimeStamp));
     setIsLoading(false);
-  };
-
-  const handleGetArchivedTabs = async () => {
-    setIsLoading(true);
-
-    const { data: newTabs, error } = await getArchivedTabs();
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    setArchivedTabs(newTabs.sort(sortByTimeStamp));
-    setIsLoading(false);
-  };
+    showToast("Tabs are up to date.");
+  }, [isOpenTabsView]);
 
   const toggleLayout = () => {
     setLayout((currentLayout) => (currentLayout === "grid" ? "list" : "grid"));
@@ -129,12 +120,9 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
 
   // Get Open Tabs and Archived Tabs based on View
   useEffect(() => {
-    if (view === "open_tabs" && tabs.length === 0) {
-      handleGetOpenTabs();
-    } else if (view === "archived_tabs" && archivedTabs.length === 0) {
-      handleGetArchivedTabs();
-    }
-  }, [archivedTabs.length, tabs.length, view]);
+    if ((isOpenTabsView && tabs.length === 0) || (!isOpenTabsView && archivedTabs.length === 0))
+      handleGetTabs();
+  }, [view, handleGetTabs, tabs.length, archivedTabs.length, isOpenTabsView]);
 
   // On Open Tabs change
   useEffect(() => {
@@ -227,11 +215,12 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
             } else {
               window.location.replace("/");
             }
+            showToast("Tab is synced successfully!");
           });
         }
       } catch (e) {
-        // TODO: Display a banner/toast message
         console.log("Is not valid url! Skipping...");
+        showToast("Is not valid url! Skipping...");
       }
     }
   }, []);
@@ -261,6 +250,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
 
     setTimeout(() => {
       setIsLoading(false);
+      showToast("Tabs are up to date.")
     }, 250);
   };
 
@@ -269,6 +259,20 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
     setArchivedTabs([]);
     onSignOut();
   };
+
+  const showToast = (message: string) => {
+    setToast({
+      show: true,
+      message,
+    })
+  }
+
+  const closeToast = () => {
+    setToast({
+      show: false,
+      message: "",
+    })
+  }
 
   return (
     <>
@@ -322,6 +326,13 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
 
       <TipsFooter isOpenTabsView={isOpenTabsView} />
       <MobileBottomNavigationBar view={view} setView={setView} />
+      <Snackbar
+        open={toast.show}
+        autoHideDuration={1000}
+        onClose={closeToast}
+        message={toast.message || ""}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      />
     </>
   );
 };
