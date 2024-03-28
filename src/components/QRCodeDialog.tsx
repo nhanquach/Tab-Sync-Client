@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import { CloseTwoTone, QrCode2TwoTone } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -7,18 +9,18 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
-import React, { useState } from "react";
+
 import TransitionComponent from "./TransitionComponent";
-import DownloadCard from "./DownloadCard";
+import DownloadCard from "./CardDownload";
 import QRCode from "./QRCode";
-import ShareCard from "./ShareCard";
-import { CloseTwoTone, QrCode2TwoTone } from "@mui/icons-material";
-import { isMobile } from "../utils/isMobile";
+import CardShare from "./CardShare";
+
+import { isMobileApp } from "../utils/isMobile";
 
 type Props = {};
 
 const QRCodeDialog = (props: Props) => {
-  const isMobileApp = isMobile();
+  const isMobile = isMobileApp();
   const [showModal, setShowModal] = useState(false);
 
   const showQRCode = () => {
@@ -48,8 +50,8 @@ const QRCodeDialog = (props: Props) => {
         onClose={closeQRCode}
         TransitionComponent={TransitionComponent}
       >
-        <DialogTitle sx={{ mt: isMobileApp ? 1 : 0 }}>QR Code</DialogTitle>
-        {!isMobileApp && (
+        <DialogTitle sx={{ mt: isMobile ? 1 : 0 }}>QR Code</DialogTitle>
+        {!isMobile && (
           <IconButton
             aria-label="close"
             onClick={closeQRCode}
@@ -67,16 +69,16 @@ const QRCodeDialog = (props: Props) => {
           <Box
             display="flex"
             justifyContent="center"
-            mb={isMobileApp ? 2 : 4}
-            mt={isMobileApp ? -4 : 0}
+            mb={isMobile ? 2 : 4}
+            mt={isMobile ? -4 : 0}
           >
             <QRCode text={window.location.href} />
           </Box>
           <DownloadCard />
-          <ShareCard />
+          <CardShare />
         </DialogContent>
-        <DialogActions sx={{ mb: isMobileApp ? 2 : 0 }}>
-          <Button variant="text" onClick={closeQRCode} fullWidth={isMobileApp}>
+        <DialogActions sx={{ mb: isMobile ? 2 : 0 }}>
+          <Button variant="text" onClick={closeQRCode} fullWidth={isMobile}>
             Close
           </Button>
         </DialogActions>

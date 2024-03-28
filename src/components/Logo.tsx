@@ -1,8 +1,7 @@
+import React, { SVGProps } from "react";
 import { useTheme } from "@mui/material";
-import * as React from "react";
-import { SVGProps } from "react";
 
-const SVGComponent = (props: SVGProps<SVGSVGElement>) => {
+const Logo = (props: SVGProps<SVGSVGElement>) => {
   const theme = useTheme();
 
   return (
@@ -29,4 +28,5 @@ const SVGComponent = (props: SVGProps<SVGSVGElement>) => {
     </svg>
   );
 };
-export default SVGComponent;
+
+export default Logo;

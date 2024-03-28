@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ExpandMoreTwoTone } from "@mui/icons-material";
-import ShareCard from "./ShareCard";
+import CardShare from "./CardShare";
 import { HOME_PAGE } from "../utils/constants";
 
 const AboutAccordion = () => {
@@ -131,7 +131,7 @@ const AboutAccordion = () => {
           <Typography variant="h6">Share TabSync</Typography>
         </AccordionSummary>
         <AccordionDetails sx={{ borderRadius: 12 }}>
-          <ShareCard textless borderless />
+          <CardShare textless borderless />
         </AccordionDetails>
       </Accordion>
     </Box>

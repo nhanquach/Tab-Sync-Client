@@ -3,9 +3,9 @@ import { CloudSyncTwoTone, ArchiveTwoTone } from "@mui/icons-material";
 import { Paper, BottomNavigation, BottomNavigationAction } from "@mui/material";
 
 import { TABS_VIEWS } from "../interfaces/iView";
-import { isMobile } from "../utils/isMobile";
+import { isMobileApp } from "../utils/isMobile";
 
-interface IMobileBottomNavigationBarProps {
+interface IHomeBottomNavigationBarProps {
   view: TABS_VIEWS;
   setView: (view: TABS_VIEWS) => void;
 }
@@ -21,11 +21,11 @@ const LiteLiveBackground = memo(() => {
   );
 });
 
-const MobileBottomNavigationBar: React.FC<IMobileBottomNavigationBarProps> = ({
+const HomeBottomNavigationBar: React.FC<IHomeBottomNavigationBarProps> = ({
   view,
   setView,
 }) => {
-  const isMobileApp = isMobile();
+  const isMobile = isMobileApp();
 
   return (
     <Paper
@@ -35,7 +35,7 @@ const MobileBottomNavigationBar: React.FC<IMobileBottomNavigationBarProps> = ({
         left: 0,
         right: 0,
         display: { md: "none" },
-        paddingBottom: isMobileApp ? "10px" : "0",
+        paddingBottom: isMobile ? "10px" : "0",
       }}
       elevation={3}
       className="bottom-navigation"
@@ -69,4 +69,4 @@ const MobileBottomNavigationBar: React.FC<IMobileBottomNavigationBarProps> = ({
   );
 };
 
-export default MobileBottomNavigationBar;
+export default HomeBottomNavigationBar;

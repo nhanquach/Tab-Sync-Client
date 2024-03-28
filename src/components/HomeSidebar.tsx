@@ -13,23 +13,23 @@ import {
 } from "@mui/material";
 
 import QRCode from "./QRCode";
-import DownloadCard from "./DownloadCard";
+import DownloadCard from "./CardDownload";
 import { TABS_VIEWS } from "../interfaces/iView";
-import ShareCard from "./ShareCard";
+import CardShare from "./CardShare";
 
-interface IDrawerProps {
+interface IHomeSidebarProps {
   view: string;
   setView: (view: TABS_VIEWS) => void;
 }
 
-const drawerWidth = 240;
+const sidebarWidth = 240;
 
-const Drawer: React.FC<IDrawerProps> = ({ view, setView }) => {
+const HomeSidebar: React.FC<IHomeSidebarProps> = ({ view, setView }) => {
   return (
     <Box
       component="nav"
       sx={{
-        width: { md: drawerWidth },
+        width: { md: sidebarWidth },
         flexShrink: { md: 0 },
       }}
     >
@@ -39,7 +39,7 @@ const Drawer: React.FC<IDrawerProps> = ({ view, setView }) => {
           display: { xs: "none", md: "block" },
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
-            width: drawerWidth,
+            width: sidebarWidth,
           },
         }}
         open
@@ -74,7 +74,7 @@ const Drawer: React.FC<IDrawerProps> = ({ view, setView }) => {
               <QRCode width={200} height={200} text="TabSync on your phone" />
             </ListItem>
             <ListItem>
-              <ShareCard small/>
+              <CardShare small/>
             </ListItem>
           </List>
         </Box>
@@ -83,4 +83,4 @@ const Drawer: React.FC<IDrawerProps> = ({ view, setView }) => {
   );
 };
 
-export default Drawer;
+export default HomeSidebar;

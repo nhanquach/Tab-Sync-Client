@@ -23,13 +23,13 @@ import {
 import { CheckCircleTwoTone, ContentCopyTwoTone } from "@mui/icons-material";
 import { HOME_PAGE } from "../utils/constants";
 
-interface IShareCardProps {
+interface ICardShareProps {
   small?: boolean;
   textless?: boolean;
   borderless?: boolean;
 }
 
-const ShareCard: React.FC<IShareCardProps> = ({
+const CardShare: React.FC<ICardShareProps> = ({
   small,
   textless,
   borderless,
@@ -150,4 +150,4 @@ const ShareCard: React.FC<IShareCardProps> = ({
   );
 };
 
-export default ShareCard;
+export default CardShare;

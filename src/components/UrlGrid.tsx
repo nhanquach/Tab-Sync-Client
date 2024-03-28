@@ -12,15 +12,12 @@ import {
   Tooltip,
   useTheme,
 } from "@mui/material";
-import {
-  ArchiveTwoTone,
-  DeleteForeverTwoTone,
-} from "@mui/icons-material";
+import { ArchiveTwoTone, DeleteForeverTwoTone } from "@mui/icons-material";
 
 import { ITab } from "../interfaces/iTab";
 
 import { TABS_VIEWS } from "../interfaces/iView";
-import TabItem from "./TabItem";
+import UrlGridItem from "./UrlGridItem";
 
 interface IUrlGridProps {
   view: TABS_VIEWS;
@@ -63,7 +60,7 @@ const UrlGrid: React.FC<IUrlGridProps> = ({ onClear, urls, view }) => {
             <CardContent>
               <Grid container spacing={2} alignItems="stretch">
                 {tabs.map((tab: ITab) => {
-                  return <TabItem key={tab.id} tab={tab} layout="grid" />;
+                  return <UrlGridItem key={tab.id} tab={tab} />;
                 })}
               </Grid>
             </CardContent>

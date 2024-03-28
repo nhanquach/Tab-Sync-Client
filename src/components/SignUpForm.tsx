@@ -11,7 +11,7 @@ import {
 
 import { ROUTES } from "../routes";
 
-import TabSyncLogo from "./TabSyncLogo";
+import LogoWithTabSync from "./LogoWithTabSync";
 
 interface ISignUpFormProps {
   isLoading: boolean;
@@ -49,7 +49,7 @@ const SignUpForm: React.FC<ISignUpFormProps> = ({
       elevation={0}
     >
       <CardContent>
-        <TabSyncLogo />
+        <LogoWithTabSync />
         <form onSubmit={handleSignUp} action="none">
           <Typography variant="h5">Sign up for a new account</Typography>
           <Typography color="#696969">

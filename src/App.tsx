@@ -55,7 +55,6 @@ function App() {
     email: string;
     password: string;
   }): Promise<{ error: string }> => {
-    // TODO: encrypt password first!
     const { error, data } = await signIn({
       email,
       password,

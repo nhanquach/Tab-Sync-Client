@@ -10,14 +10,11 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import {
-  ArchiveTwoTone,
-  DeleteForeverTwoTone,
-} from "@mui/icons-material";
+import { ArchiveTwoTone, DeleteForeverTwoTone } from "@mui/icons-material";
 
 import { ITab } from "../interfaces/iTab";
 import { TABS_VIEWS } from "../interfaces/iView";
-import TabItem from "./TabItem";
+import UrlListItem from "./UrlListItem";
 
 interface IUrlListProps {
   view: TABS_VIEWS;
@@ -56,7 +53,7 @@ const UrlList: React.FC<IUrlListProps> = ({ onClear, urls, view }) => {
             />
             <CardContent>
               {tabs.map((tab: ITab) => {
-                return <TabItem tab={tab} key={tab.id} layout="list" />;
+                return <UrlListItem tab={tab} key={tab.id} />;
               })}
             </CardContent>
           </Card>

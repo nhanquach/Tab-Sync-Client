@@ -16,10 +16,10 @@ import {
 import { sendFeedback } from "../clients/supabaseClient";
 import FeedbackForm from "./FeedbackForm";
 import TransitionComponent from "./TransitionComponent";
-import { isMobile } from "../utils/isMobile";
+import { isMobileApp } from "../utils/isMobile";
 
 const FeedbackDialog = () => {
-  const isMobileApp = isMobile();
+  const isMobile = isMobileApp();
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -72,13 +72,13 @@ const FeedbackDialog = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            mt: isMobileApp ? 2 : 0,
+            mt: isMobile ? 2 : 0,
           }}
         >
           <FeedbackTwoTone sx={{ color: theme.palette.primary.main, mr: 1 }} />
           Your feedback fuels our fire 🔥
         </DialogTitle>
-        {!isMobileApp && (
+        {!isMobile && (
           <IconButton
             aria-label="close"
             onClick={handleCloseFeedback}
@@ -97,8 +97,8 @@ const FeedbackDialog = () => {
             <FeedbackForm sendFeedback={onSendFeedback} />
           </DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ mb: isMobileApp ? 4 : 0 }}>
-          <Button fullWidth={isMobileApp} onClick={handleCloseFeedback}>
+        <DialogActions sx={{ mb: isMobile ? 4 : 0 }}>
+          <Button fullWidth={isMobile} onClick={handleCloseFeedback}>
             Close
           </Button>
         </DialogActions>

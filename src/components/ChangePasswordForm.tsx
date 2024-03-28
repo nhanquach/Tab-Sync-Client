@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { changePassword } from "../clients";
-import { isMobile } from "../utils/isMobile";
+import { isMobileApp } from "../utils/isMobile";
 
 interface IChangePasswordFormProps {
   handleCloseChangePasswordDialog: () => void;
@@ -20,7 +20,7 @@ interface IChangePasswordFormProps {
 const ChangePasswordForm: React.FC<IChangePasswordFormProps> = ({
   handleCloseChangePasswordDialog,
 }) => {
-  const isMobileApp = isMobile();
+  const isMobile = isMobileApp();
   const [newPassword, setNewPassword] = useState("");
   const [repeatedNewPassword, setRepeatedNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +73,7 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = ({
         sx={{
           backdropFilter: "blur(8px)",
           backgroundColor: "transparent",
-          mt: isMobileApp ? 4 : 2
+          mt: isMobile ? 4 : 2
         }}
       >
         <Typography variant="h5">Change your password</Typography>
@@ -111,7 +111,7 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = ({
           </FormControl>
         </Box>
 
-        {isMobileApp && (
+        {isMobile && (
           <Box display="flex" flexDirection="column" sx={{ mt: 2, gap: 2 }}>
             <Button
               fullWidth
@@ -127,7 +127,7 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = ({
           </Box>
         )}
       </DialogContent>
-      {!isMobileApp && (
+      {!isMobile && (
         <DialogActions>
           <Button onClick={handleCloseChangePasswordDialog}>Close</Button>
 

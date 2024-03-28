@@ -2,6 +2,8 @@ import React, { memo } from "react";
 
 import { Button, Card, CardContent, Typography } from "@mui/material";
 
+import { EXTENSION_PAGE } from "../utils/constants";
+
 interface IDownLoadCardProps {
   small?: boolean;
 }
@@ -25,7 +27,7 @@ const DownloadCard: React.FC<IDownLoadCardProps> = ({ small }) => {
         <Button
           size={small ? "small" : "medium"}
           variant="outlined"
-          href="https://chromewebstore.google.com/detail/tab-sync/bokjahifgpgcilgpmhmaammkjmhbmjbc"
+          href={EXTENSION_PAGE}
           target="_blank"
           rel="noopener noreferrer"
           sx={{ fontSize: small ? 12 : 14 }}

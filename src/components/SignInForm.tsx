@@ -12,7 +12,7 @@ import {
 
 import { ROUTES } from "../routes";
 
-import TabSyncLogo from "./TabSyncLogo";
+import LogoWithTabSync from "./LogoWithTabSync";
 
 interface ISignInFormProps {
   isLoading: boolean;
@@ -47,7 +47,7 @@ const SignInForm: React.FC<ISignInFormProps> = ({
       elevation={0}
     >
       <CardContent>
-        <TabSyncLogo />
+        <LogoWithTabSync />
         <form onSubmit={handleSignIn} action="none">
           <Typography variant="h5">Sign in</Typography>
           <TextField

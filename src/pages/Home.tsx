@@ -17,13 +17,16 @@ import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
 import { sortByTimeStamp } from "../utils/sortByTimeStamp";
 import UrlGrid from "../components/UrlGrid";
 import { sortByTitle } from "../utils/sortByTitle";
-import Drawer from "../components/Drawer";
-import Toolbar, { TLayout, TOrderBy } from "../components/Toolbar";
+import HomeSidebar from "../components/HomeSidebar";
+import Toolbar, { TOrderBy } from "../components/Toolbar";
 import HomeAppBar from "../components/HomeAppBar";
 import NoData from "../components/NoData";
 import TipsFooter from "../components/TipsFooter";
-import MobileBottomNavigationBar from "../components/MobileBottomNavigationBar";
+import HomeBottomNavigationBar from "../components/HomeBottomNavigationBar";
 import { isHistoryApiSupported } from "../utils/isHistoryAPISupported";
+import { getItem, saveItem } from "../utils/LocalStorageHelper";
+import { LAYOUT, LAYOUT_KEY } from "../utils/constants";
+import { Layout } from "../interfaces/Layout";
 
 interface IHomeProps {
   user?: any;
@@ -42,7 +45,9 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
   const [displayedBrowsers, setDisplayedBrowsers] = useState<string[]>([]);
   const [showThisWebsite, setShowThisWebsite] = useState<boolean>(false);
 
-  const [layout, setLayout] = useState<TLayout>("list");
+  const [layout, setLayout] = useState<Layout>(
+    getItem(LAYOUT_KEY) || LAYOUT.LIST
+  );
   const [orderBy, setOrderBy] = useState<TOrderBy>("time");
 
   const isOpenTabsView = useMemo(() => view === TABS_VIEWS.OPEN_TABS, [view]);
@@ -109,7 +114,13 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
   }, [isOpenTabsView]);
 
   const toggleLayout = () => {
-    setLayout((currentLayout) => (currentLayout === "grid" ? "list" : "grid"));
+    setLayout((currentLayout: Layout) => {
+      const newLayout =
+        currentLayout === LAYOUT.GRID ? LAYOUT.LIST : LAYOUT.GRID;
+
+      saveItem(LAYOUT_KEY, newLayout);
+      return newLayout;
+    });
   };
 
   const toggleOrderBy = () => {
@@ -120,7 +131,10 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
 
   // Get Open Tabs and Archived Tabs based on View
   useEffect(() => {
-    if ((isOpenTabsView && tabs.length === 0) || (!isOpenTabsView && archivedTabs.length === 0))
+    if (
+      (isOpenTabsView && tabs.length === 0) ||
+      (!isOpenTabsView && archivedTabs.length === 0)
+    )
       handleGetTabs();
   }, [view, handleGetTabs, tabs.length, archivedTabs.length, isOpenTabsView]);
 
@@ -250,7 +264,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
 
     setTimeout(() => {
       setIsLoading(false);
-      showToast("Tabs are up to date.")
+      showToast("Tabs are up to date.");
     }, 250);
   };
 
@@ -264,20 +278,20 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
     setToast({
       show: true,
       message,
-    })
-  }
+    });
+  };
 
   const closeToast = () => {
     setToast({
       show: false,
       message: "",
-    })
-  }
+    });
+  };
 
   return (
     <>
       <HomeAppBar user={user} onSignOut={handleSignOut} />
-      <Drawer view={view} setView={setView} />
+      <HomeSidebar view={view} setView={setView} />
       <Toolbar
         isLoading={isLoading}
         handleRefresh={handleRefresh}
@@ -325,7 +339,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
       )}
 
       <TipsFooter isOpenTabsView={isOpenTabsView} />
-      <MobileBottomNavigationBar view={view} setView={setView} />
+      <HomeBottomNavigationBar view={view} setView={setView} />
       <Snackbar
         open={toast.show}
         autoHideDuration={1000}

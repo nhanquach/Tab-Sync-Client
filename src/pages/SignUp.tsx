@@ -4,10 +4,10 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 
 import { ROUTES } from "../routes";
 import AboutAccordion from "../components/AboutAccordion";
-import DownloadCard from "../components/DownloadCard";
+import DownloadCard from "../components/CardDownload";
 import QRCode from "../components/QRCode";
 import SignUpForm from "../components/SignUpForm";
-import { isMobile } from "../utils/isMobile";
+import { isMobileApp } from "../utils/isMobile";
 
 interface ISignUpProps {
   signUp: ({
@@ -21,7 +21,7 @@ interface ISignUpProps {
 }
 
 const SignUp: React.FC<ISignUpProps> = ({ signUp, setView }) => {
-  const isMobileApp = isMobile();
+  const isMobile = isMobileApp();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -65,7 +65,7 @@ const SignUp: React.FC<ISignUpProps> = ({ signUp, setView }) => {
             setView={setView}
           />
         </Grid2>
-        {!isMobileApp && (
+        {!isMobile && (
           <Grid2 md={4} sm={12} alignItems="center">
             <Box display="flex" flexDirection={"column"} alignItems="center">
               <DownloadCard />

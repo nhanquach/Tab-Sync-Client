@@ -3,12 +3,12 @@ import { AlertColor, Box, Container } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 import { ROUTES } from "../routes";
-import DownloadCard from "../components/DownloadCard";
+import DownloadCard from "../components/CardDownload";
 import AboutAccordion from "../components/AboutAccordion";
 import QRCode from "../components/QRCode";
 import SignInForm from "../components/SignInForm";
 import { AuthError } from "@supabase/supabase-js";
-import { isMobile } from "../utils/isMobile";
+import { isMobileApp } from "../utils/isMobile";
 
 interface ISignInProps {
   signIn: ({
@@ -36,7 +36,7 @@ const SignIn: React.FC<ISignInProps> = ({
   setView,
   onResetPassword,
 }) => {
-  const isMobileApp = isMobile();
+  const isMobile = isMobileApp();
   const [isLoading, setIsLoading] = useState(false);
 
   const [message, setMessage] = useState<{ type: AlertColor; text: string }>({
@@ -98,7 +98,7 @@ const SignIn: React.FC<ISignInProps> = ({
             onResetPassword={resetPassword}
           />
         </Grid2>
-        {!isMobileApp && (
+        {!isMobile && (
           <Grid2 md={4} sm={12} alignItems="center">
             <Box display="flex" flexDirection={"column"} alignItems="center">
               <DownloadCard />
