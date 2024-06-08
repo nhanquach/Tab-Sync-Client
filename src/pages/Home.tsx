@@ -33,6 +33,26 @@ interface IHomeProps {
   onSignOut: () => void;
 }
 
+const updateTabs = (currentTabs: ITab[], payload: IDatabaseUpdatePayload) => {
+  if (payload.eventType === "UPDATE") {
+    const index = currentTabs.findIndex((tab) => tab.id === payload.new.id);
+
+    if (index > -1) {
+      const newTabs = [...currentTabs];
+      newTabs.splice(index, 1, payload.new);
+      return newTabs;
+    }
+
+    return [payload.new, ...currentTabs];
+  }
+
+  if (payload.eventType === "DELETE") {
+    return currentTabs.filter((t) => t.id !== payload.old.id);
+  }
+
+  return currentTabs;
+};
+
 const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
   const [toast, setToast] = useState({ show: false, message: "" });
   const [isLoading, setIsLoading] = useState(true);
@@ -108,7 +128,9 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
       return;
     }
 
-    setTabsFunction(newTabs.sort(sortByTimeStamp));
+    newTabs.sort(sortByTimeStamp);
+    setTabsFunction(newTabs);
+
     setIsLoading(false);
     showToast("Tabs are up to date.");
   }, [isOpenTabsView]);
@@ -141,54 +163,18 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
   // On Open Tabs change
   useEffect(() => {
     onOpenTabChange((payload: IDatabaseUpdatePayload) => {
-      if (payload.eventType === "UPDATE") {
-        setTabs((currentTabs) => {
-          const index = currentTabs.findIndex(
-            (tab) => tab.id === payload.new.id
-          );
-
-          if (index > -1) {
-            const newTabs = [...currentTabs];
-            newTabs.splice(index, 1, payload.new);
-            return newTabs;
-          }
-
-          return [payload.new, ...currentTabs];
-        });
-      }
-
-      if (payload.eventType === "DELETE") {
-        setTabs((currentTabs) =>
-          currentTabs.filter((t) => t.id !== payload.old.id)
-        );
-      }
+      setTabs((currentTabs) => {
+        return updateTabs(currentTabs, payload);
+      });
     });
   }, [tabs]);
 
   // On Archived Tabs change
   useEffect(() => {
     onArchivedTabChange((payload: IDatabaseUpdatePayload) => {
-      if (payload.eventType === "UPDATE") {
-        setArchivedTabs((currentTabs) => {
-          const index = currentTabs.findIndex(
-            (tab) => tab.id === payload.new.id
-          );
-
-          if (index > -1) {
-            const newTabs = [...currentTabs];
-            newTabs.splice(index, 1, payload.new);
-            return newTabs;
-          }
-
-          return [payload.new, ...currentTabs];
-        });
-      }
-
-      if (payload.eventType === "DELETE") {
-        setArchivedTabs((currentTabs) =>
-          currentTabs.filter((t) => t.id !== payload.old.id)
-        );
-      }
+      setArchivedTabs((currentTabs) => {
+        return updateTabs(currentTabs, payload);
+      });
     });
   }, [archivedTabs]);
 
@@ -233,7 +219,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
           });
         }
       } catch (e) {
-        console.log("Is not valid url! Skipping...");
+        console.error("Is not valid url! Skipping...");
         showToast("Is not valid url! Skipping...");
       }
     }
