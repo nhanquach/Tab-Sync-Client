@@ -13,46 +13,67 @@ const NoData: React.FC<INoDataProps> = ({ isEmptySearch }) => {
   if (isEmptySearch) {
     return (
       <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          textAlign: "center",
-          minHeight: "50vh",
-          mb: 12,
-          color: theme.palette.grey[500],
-        }}
+        display="flex"
+        gap={4}
+        width="100%"
+        flexWrap="wrap"
+        justifyContent="center"
+        alignContent="center"
+        minHeight="50vh"
+        mb={12}
+        color={theme.palette.grey[500]}
       >
         <TabTwoTone sx={{ fontSize: 100 }} />
-        <Typography variant="h4">No tab found</Typography>
-        <Typography variant="body1">
-          Tabs can be searched by name or url
-        </Typography>
-        <Typography variant="body1">
-          Try another search term, add more devices to the list
-        </Typography>
+        <Box
+          sx={{
+            textAlign: "left",
+            [theme.breakpoints.down("sm")]: {
+              textAlign: "center",
+            },
+          }}
+        >
+          <Typography variant="h4">No tab found</Typography>
+          <Typography variant="body1">
+            Tabs can be searched by name or url
+          </Typography>
+          <Typography variant="body1">
+            Try another search term, add more devices to the list
+          </Typography>
+        </Box>
       </Box>
     );
   }
 
   return (
     <Box
+      display="flex"
+      flexWrap="wrap"
+      justifyContent="center"
+      alignContent="center"
+      gap={4}
+      width="100%"
       sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        minHeight: "50vh",
-        mb: 12,
-        color: theme.palette.grey[500],
+        [theme.breakpoints.up("md")]: {
+          py: 32,
+        },
+        py: 16,
       }}
     >
       <PhonelinkTwoTone sx={{ fontSize: 100 }} />
-      <Typography variant="h2">Your tabs will be shown here</Typography>
-      <Typography variant="h5">
-        continue browsing from your computers or phones
-      </Typography>
+      <Box
+        sx={{
+          textAlign: "left",
+          [theme.breakpoints.down("sm")]: {
+            textAlign: "center",
+          },
+        }}
+        padding={2}
+      >
+        <Typography variant="h4">Open a New Tab to begin</Typography>
+        <Typography variant="subtitle1">
+          Closed tabs will be saved to Archived Tabs.
+        </Typography>
+      </Box>
     </Box>
   );
 };
