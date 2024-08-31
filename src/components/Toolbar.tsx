@@ -1,14 +1,11 @@
 import React, { useRef } from "react";
 
-import {
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import { useTheme, useMediaQuery } from "@mui/material";
 import { Layout } from "../interfaces/Layout";
 import ToolbarStandard from "./ToolbarStandard";
 import ToolbarCompact from "./ToolbarCompact";
-
-export type TOrderBy = "time" | "title";
+import { saveItem } from "../utils/LocalStorageHelper";
+import { LAST_SAVED_DISPLAYED_BROWSERS_KEY, ORDER } from "../utils/constants";
 
 interface IToolbarProps {
   handleRefresh(): void;
@@ -21,7 +18,7 @@ interface IToolbarProps {
   toggleLayout(): void;
   layout: Layout;
   toggleOrderBy(): void;
-  orderBy: TOrderBy;
+  orderBy: ORDER;
   showThisWebsite: boolean;
   setShowThisWebsite(shouldShow: boolean): void;
 }
@@ -61,11 +58,12 @@ const Toolbar: React.FC<IToolbarProps> = ({
   };
 
   const handleSelectDisplayBrowsers = (browser: string) => {
-    if (displayedBrowsers.includes(browser)) {
-      setDisplayedBrowsers(displayedBrowsers.filter((f) => f !== browser));
-    } else {
-      setDisplayedBrowsers([...displayedBrowsers, browser]);
-    }
+    const browsers = displayedBrowsers.includes(browser)
+      ? displayedBrowsers.filter((f) => f !== browser)
+      : [...displayedBrowsers, browser];
+
+    setDisplayedBrowsers(browsers);
+    saveItem(LAST_SAVED_DISPLAYED_BROWSERS_KEY, browsers.join(","));
   };
 
   const handleSetShowThisWebsite = () => {

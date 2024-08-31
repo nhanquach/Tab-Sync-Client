@@ -18,14 +18,20 @@ import { sortByTimeStamp } from "../utils/sortByTimeStamp";
 import UrlGrid from "../components/UrlGrid";
 import { sortByTitle } from "../utils/sortByTitle";
 import HomeSidebar from "../components/HomeSidebar";
-import Toolbar, { TOrderBy } from "../components/Toolbar";
+import Toolbar from "../components/Toolbar";
 import HomeAppBar from "../components/HomeAppBar";
 import NoData from "../components/NoData";
 import TipsFooter from "../components/TipsFooter";
 import HomeBottomNavigationBar from "../components/HomeBottomNavigationBar";
 import { isHistoryApiSupported } from "../utils/isHistoryAPISupported";
 import { getItem, saveItem } from "../utils/LocalStorageHelper";
-import { LAYOUT, LAYOUT_KEY } from "../utils/constants";
+import {
+  LAST_SAVED_DISPLAYED_BROWSERS_KEY,
+  LAST_SAVED_ORDER_BY_KEY,
+  LAYOUT,
+  LAYOUT_KEY,
+  ORDER,
+} from "../utils/constants";
 import { Layout } from "../interfaces/Layout";
 
 interface IHomeProps {
@@ -68,7 +74,9 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
   const [layout, setLayout] = useState<Layout>(
     getItem(LAYOUT_KEY) || LAYOUT.LIST
   );
-  const [orderBy, setOrderBy] = useState<TOrderBy>("time");
+  const [orderBy, setOrderBy] = useState<ORDER>(
+    getItem<ORDER>(LAST_SAVED_ORDER_BY_KEY) ?? ORDER.TIME
+  );
 
   const isOpenTabsView = useMemo(() => view === TABS_VIEWS.OPEN_TABS, [view]);
 
@@ -103,7 +111,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
     }
 
     return displayedTabs.sort(
-      orderBy === "time" ? sortByTimeStamp : sortByTitle
+      orderBy === ORDER.TIME ? sortByTimeStamp : sortByTitle
     );
   }, [
     isOpenTabsView,
@@ -146,9 +154,11 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
   };
 
   const toggleOrderBy = () => {
-    setOrderBy((currentOrderBy) =>
-      currentOrderBy === "time" ? "title" : "time"
-    );
+    setOrderBy((currentOrderBy) => {
+      const order = currentOrderBy === ORDER.TIME ? ORDER.TITLE : ORDER.TIME;
+      saveItem(LAST_SAVED_ORDER_BY_KEY, order.toString());
+      return order;
+    });
   };
 
   // Get Open Tabs and Archived Tabs based on View
@@ -178,8 +188,18 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
     });
   }, [archivedTabs]);
 
-  // Select all devices as filters
+  // Get last saved browsers to display
+  // Default to show all
   useEffect(() => {
+    const lastSavedDisplayedBrowsers = getItem<string>(
+      LAST_SAVED_DISPLAYED_BROWSERS_KEY
+    )?.split(",");
+
+    if (lastSavedDisplayedBrowsers?.length) {
+      setDisplayedBrowsers(lastSavedDisplayedBrowsers);
+      return;
+    }
+
     const devices = Array.from(new Set(tabs.map((url) => url.deviceName)));
     setDisplayedBrowsers(devices);
   }, [tabs]);

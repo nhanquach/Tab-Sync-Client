@@ -26,8 +26,8 @@ import {
 } from "@mui/material";
 import { useKeyPress } from "../hooks/useKeyPress";
 import { Layout } from "../interfaces/Layout";
-import { TOrderBy } from "./Toolbar";
 import { isMobileDevice } from "../utils/isMobile";
+import { ORDER } from "../utils/constants";
 
 interface IToolbarStandardProps {
   searchBoxRef: React.MutableRefObject<any>;
@@ -47,7 +47,7 @@ interface IToolbarStandardProps {
   layout: Layout;
   browsers: string[];
   toggleOrderBy: () => void;
-  orderBy: TOrderBy;
+  orderBy: ORDER;
   selectDeviceDropdownAnchorEl: any;
   handleCloseSelectDeviceDropdown: () => void;
 }
@@ -192,7 +192,11 @@ export const ToolbarStandard: React.FC<IToolbarStandardProps> = ({
       </Tooltip>
       <Tooltip title="Order by Time / Alphabet">
         <IconButton onClick={toggleOrderBy}>
-          {orderBy === "time" ? <TimelineTwoTone /> : <SortByAlphaTwoTone />}
+          {orderBy === ORDER.TIME ? (
+            <TimelineTwoTone />
+          ) : (
+            <SortByAlphaTwoTone />
+          )}
         </IconButton>
       </Tooltip>
     </Box>

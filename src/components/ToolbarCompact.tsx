@@ -25,7 +25,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Layout } from "../interfaces/Layout";
-import { TOrderBy } from "./Toolbar";
+import { ORDER } from "../utils/constants";
 import { isMobileDevice } from "../utils/isMobile";
 
 interface IToolbarCompactProps {
@@ -46,7 +46,7 @@ interface IToolbarCompactProps {
   layout: Layout;
   browsers: string[];
   toggleOrderBy: () => void;
-  orderBy: TOrderBy;
+  orderBy: ORDER;
   selectDeviceDropdownAnchorEl: any;
   handleCloseSelectDeviceDropdown: () => void;
 }
@@ -196,7 +196,11 @@ const ToolbarCompact: React.FC<IToolbarCompactProps> = ({
         </Tooltip>
         <Tooltip title="Order by Time / Alphabet">
           <IconButton onClick={toggleOrderBy}>
-            {orderBy === "time" ? <TimelineTwoTone /> : <SortByAlphaTwoTone />}
+            {orderBy === ORDER.TIME ? (
+              <TimelineTwoTone />
+            ) : (
+              <SortByAlphaTwoTone />
+            )}
           </IconButton>
         </Tooltip>
       </Box>
