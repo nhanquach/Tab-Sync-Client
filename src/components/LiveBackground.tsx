@@ -22,7 +22,6 @@ const LiveBackground: React.FC<ILiveBackground> = ({ fullHeight }) => {
       <li></li>
       <li></li>
       <li></li>
-      <li></li>
     </ul>
   );
 };
