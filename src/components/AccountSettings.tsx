@@ -5,6 +5,7 @@ import {
   KeyTwoTone,
   ExitToAppTwoTone,
   CloseTwoTone,
+  DeleteForeverTwoTone,
 } from "@mui/icons-material";
 import {
   Tooltip,
@@ -23,16 +24,14 @@ import {
 import ChangePasswordForm from "./ChangePasswordForm";
 import TransitionComponent from "./TransitionComponent";
 import { isMobileApp } from "../utils/isMobile";
+import { signOut } from "../clients/supabaseClient";
+import { AccountDeleteConfirmDialog } from "./AccountDeleteConfirmDialog";
 
 interface IAccountSettingsProps {
   user?: User;
-  onSignOut: () => void;
 }
 
-const AccountSettings: React.FC<IAccountSettingsProps> = ({
-  user,
-  onSignOut,
-}) => {
+const AccountSettings: React.FC<IAccountSettingsProps> = ({ user }) => {
   const theme = useTheme();
   const isMobile = isMobileApp();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -43,6 +42,7 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
   const [isLogingOut, setIsLogingOut] = useState(false);
   const [accountSettingsAchorEl, setAccountSettingsAnchorEl] =
     useState<null | HTMLElement>(null);
+  const [confirmDeleteAccount, setConfirmDeleteAccount] = useState(false);
 
   const openProfile = Boolean(accountSettingsAchorEl);
   const handleOpenAccountSettings = (event: React.MouseEvent<HTMLElement>) => {
@@ -68,12 +68,20 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
     }
   };
 
-  const handleLogOut = () => {
-    setIsLogingOut(true);
+  const handleLogOut = async () => {
+    try {
+      setIsLogingOut(true);
 
-    setTimeout(() => {
-      onSignOut();
-    }, 500);
+      await signOut();
+
+      setTimeout(() => {
+        window.location.replace("/");
+      }, 500);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLogingOut(false);
+    }
   };
 
   return (
@@ -125,6 +133,17 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
             Sign out
           </Typography>
         </MenuItem>
+        <MenuItem onClick={() => setConfirmDeleteAccount(true)}>
+          <DeleteForeverTwoTone />
+          <Typography
+            ml={2}
+            sx={{
+              display: { xs: "none", md: "inline" },
+            }}
+          >
+            Delete account
+          </Typography>
+        </MenuItem>
       </Menu>
 
       <Dialog
@@ -161,6 +180,11 @@ const AccountSettings: React.FC<IAccountSettingsProps> = ({
           handleCloseChangePasswordDialog={handleCloseChangePasswordDialog}
         />
       </Dialog>
+
+      <AccountDeleteConfirmDialog
+        open={confirmDeleteAccount}
+        onClose={() => setConfirmDeleteAccount(false)}
+      />
     </>
   );
 };

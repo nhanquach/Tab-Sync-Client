@@ -1,6 +1,6 @@
 {
-  "short_name": "TabSync",
   "name": "TabSync - Your Tabs Accross Devices",
+  "short_name": "TabSync",
   "icons": [
     {
       "src": "favicon.ico",

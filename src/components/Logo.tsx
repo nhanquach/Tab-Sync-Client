@@ -1,4 +1,4 @@
-import React, { SVGProps } from "react";
+import { SVGProps } from "react";
 import { useTheme } from "@mui/material";
 
 const Logo = (props: SVGProps<SVGSVGElement>) => {

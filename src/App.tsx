@@ -6,7 +6,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { User } from "@supabase/supabase-js";
 
 import { getUser, signUp, signIn, resetPassword } from "./clients";
-import { signOut } from "./clients/supabaseClient";
 
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -72,12 +71,6 @@ function App() {
     };
   };
 
-  const onSignOut = async () => {
-    await signOut();
-    setView(ROUTES.SIGN_IN);
-    window.location.replace("/");
-  };
-
   const onResetPassword = async ({ email }: { email: string }) => {
     return await resetPassword({ email });
   };
@@ -134,7 +127,7 @@ function App() {
 
             {view === ROUTES.HOME && (
               <Box pb={8}>
-                <Home user={user} onSignOut={onSignOut} />
+                <Home user={user} />
               </Box>
             )}
           </Container>

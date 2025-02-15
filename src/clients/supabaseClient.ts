@@ -8,8 +8,8 @@ import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
 import { HOME_PAGE } from "../utils/constants";
 
 const rootClient = createClient(
-  process.env.REACT_APP_SUPABASE_URL!,
-  process.env.REACT_APP_SUPABASE_KEY!
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_KEY!
 );
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let client: SupabaseClient<any, "public", any> | null;
@@ -39,8 +39,8 @@ export const getClient = async () => {
     }
 
     client = createClient(
-      process.env.REACT_APP_SUPABASE_URL!,
-      process.env.REACT_APP_SUPABASE_KEY!,
+      import.meta.env.VITE_SUPABASE_URL!,
+      import.meta.env.VITE_SUPABASE_KEY!,
       {
         global: {
           headers: {
@@ -150,6 +150,13 @@ export const resetPassword = async ({ email }: { email: string }) => {
   });
 };
 
+export const deleteAccount = async () => {
+  sendFeedback("delete_account", "");
+
+  await archiveOpenTabs();
+  await removeArchivedTabs();
+};
+
 export const getOpenTabs = async (
   deviceName?: string
 ): Promise<{
@@ -196,7 +203,6 @@ export const getArchivedTabs = async (deviceName?: string) => {
 export const sendTab = async (
   tab: ITab
 ): Promise<{ data: ITab; error?: { message: string } }> => {
-  console.log("🚀 . tab:", tab);
   checkTokenExpired();
 
   const { id, url, favIconUrl = "", title, index, windowId } = tab;
@@ -328,14 +334,12 @@ export const removeArchivedTabs = async (deviceName?: string) => {
 };
 
 export const sendFeedback = async (type: string, description: string) => {
-  const { client, userId } = await getClient();
-  if (!userId) {
-    return { error: { message: "No user id" } };
-  }
+  const { client } = await getClient();
+  const currentUser = await getUser();
 
-  if (client) {
-    await client.from("feedback").insert([{ type, description }]);
-  }
+  await client
+    ?.from("feedback")
+    .insert([{ type, description, user_id: currentUser?.id }]);
 };
 
 const checkTokenExpired = async () => {
@@ -372,27 +376,19 @@ const getNewToken = async () => {
 };
 
 const getLocalSettings = (): ITabSyncSettings => {
-  try {
-    const tabSyncSettings = localStorage.getItem("tabSyncSettings");
+  const tabSyncSettings = localStorage.getItem("tabSyncSettings");
 
-    return JSON.parse(tabSyncSettings!).tabSyncSettings as ITabSyncSettings;
-  } catch (e) {
-    console.error("🚀 . e:", e);
-    return {
-      deviceName: "",
-      token: {
-        refresh_token: "",
-        access_token: "",
-        expires_in: 0,
-        token_type: "",
-        user: {
-          id: "",
-          app_metadata: {},
-          user_metadata: {},
-          aud: "",
-          created_at: "",
-        },
-      },
+  if (tabSyncSettings) {
+    return JSON.parse(tabSyncSettings).tabSyncSettings;
+  }
+
+  return {
+    deviceName: "",
+    token: {
+      refresh_token: "",
+      access_token: "",
+      expires_in: 0,
+      token_type: "",
       user: {
         id: "",
         app_metadata: {},
@@ -400,6 +396,13 @@ const getLocalSettings = (): ITabSyncSettings => {
         aud: "",
         created_at: "",
       },
-    };
-  }
+    },
+    user: {
+      id: "",
+      app_metadata: {},
+      user_metadata: {},
+      aud: "",
+      created_at: "",
+    },
+  };
 };

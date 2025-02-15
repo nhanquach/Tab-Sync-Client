@@ -2,7 +2,7 @@ import { IDatabaseUpdatePayload } from "../interfaces/IDatabaseUpdate";
 import { ITab } from "../interfaces/iTab";
 import * as supabaseClient from "./supabaseClient";
 
-let backend: typeof supabaseClient;
+var backend: typeof supabaseClient;
 
 const getClient = async () => {
   if (backend) {
@@ -47,6 +47,10 @@ export const changePassword = async ({
 export const resetPassword = async ({ email }: { email: string }) => {
   return (await getClient()).resetPassword({ email });
 };
+
+export const deleteAccount = async () => {
+  return (await getClient()).deleteAccount();
+}
 
 export const getOpenTabs = async () => {
   return (await getClient()).getOpenTabs();

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Box, Container } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Box, Container, Grid2 } from "@mui/material";
 
 import { ROUTES } from "../routes";
 import AboutAccordion from "../components/AboutAccordion";
@@ -57,7 +56,7 @@ const SignUp: React.FC<ISignUpProps> = ({ signUp, setView }) => {
         justifyContent={{ xs: "center", md: "space-between" }}
         alignItems="center"
       >
-        <Grid2 md={8} sm={12}>
+        <Grid2 size={{ md: 8, sm: 12 }}>
           <SignUpForm
             isLoading={isLoading}
             message={message}
@@ -66,7 +65,7 @@ const SignUp: React.FC<ISignUpProps> = ({ signUp, setView }) => {
           />
         </Grid2>
         {!isMobile && (
-          <Grid2 md={4} sm={12} alignItems="center">
+          <Grid2 size={{ md: 8, sm: 12 }} alignItems="center">
             <Box display="flex" flexDirection={"column"} alignItems="center">
               <DownloadCard />
               <QRCode width={200} height={200} text="TabSync on your phone" />

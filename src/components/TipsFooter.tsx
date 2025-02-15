@@ -4,10 +4,10 @@ import { LightbulbTwoTone } from "@mui/icons-material";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 
 interface ITtipsFooterProps {
-  isOpenTabsView: boolean;
+  // isOpenTabsView: boolean;
 }
 
-const TipsFooter: React.FC<ITtipsFooterProps> = ({ isOpenTabsView }) => {
+const TipsFooter: React.FC<ITtipsFooterProps> = () => {
   const theme = useTheme();
   const isDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 

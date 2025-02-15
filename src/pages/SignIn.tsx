@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { AlertColor, Box, Container } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { AlertColor, Box, Container, Grid2 } from "@mui/material";
 
 import { ROUTES } from "../routes";
 import DownloadCard from "../components/CardDownload";
@@ -89,7 +88,7 @@ const SignIn: React.FC<ISignInProps> = ({
         justifyContent={{ xs: "center", md: "space-between" }}
         alignItems="center"
       >
-        <Grid2 md={8} sm={12}>
+        <Grid2 size={{md: 8, sm: 12}}>
           <SignInForm
             message={message}
             isLoading={isLoading}
@@ -99,7 +98,7 @@ const SignIn: React.FC<ISignInProps> = ({
           />
         </Grid2>
         {!isMobile && (
-          <Grid2 md={4} sm={12} alignItems="center">
+          <Grid2 size={{md: 4, sm: 12}} alignItems="center">
             <Box display="flex" flexDirection={"column"} alignItems="center">
               <DownloadCard />
               <QRCode width={200} height={200} text="TabSync on your phone" />

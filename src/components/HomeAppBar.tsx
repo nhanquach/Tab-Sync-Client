@@ -13,10 +13,9 @@ import LogoWithTabSync from "./LogoWithTabSync";
 
 interface IHomeAppBarProps {
   user?: User;
-  onSignOut: () => void;
 }
 
-const HomeAppBar: React.FC<IHomeAppBarProps> = ({ user, onSignOut }) => {
+const HomeAppBar: React.FC<IHomeAppBarProps> = ({ user }) => {
   const isMobile = isMobileApp();
 
   return (
@@ -39,7 +38,7 @@ const HomeAppBar: React.FC<IHomeAppBarProps> = ({ user, onSignOut }) => {
           <Box display="flex" gap={1}>
             <QRCodeDialog />
             <FeedbackDialog />
-            <AccountSettings user={user} onSignOut={onSignOut} />
+            <AccountSettings user={user} />
           </Box>
         </Toolbar>
       </AppBar>

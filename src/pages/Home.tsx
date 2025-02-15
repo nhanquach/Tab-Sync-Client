@@ -36,7 +36,6 @@ import { Layout } from "../interfaces/Layout";
 
 interface IHomeProps {
   user?: any;
-  onSignOut: () => void;
 }
 
 const updateTabs = (currentTabs: ITab[], payload: IDatabaseUpdatePayload) => {
@@ -59,7 +58,7 @@ const updateTabs = (currentTabs: ITab[], payload: IDatabaseUpdatePayload) => {
   return currentTabs;
 };
 
-const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
+const Home: React.FC<IHomeProps> = ({ user }) => {
   const [toast, setToast] = useState({ show: false, message: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [view, setView] = useState<TABS_VIEWS>(TABS_VIEWS.OPEN_TABS);
@@ -274,12 +273,6 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
     }, 250);
   };
 
-  const handleSignOut = () => {
-    setTabs([]);
-    setArchivedTabs([]);
-    onSignOut();
-  };
-
   const showToast = (message: string) => {
     setToast({
       show: true,
@@ -296,7 +289,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
 
   return (
     <>
-      <HomeAppBar user={user} onSignOut={handleSignOut} />
+      <HomeAppBar user={user} />
       <HomeSidebar view={view} setView={setView} />
       <Toolbar
         isLoading={isLoading}
@@ -344,7 +337,7 @@ const Home: React.FC<IHomeProps> = ({ user, onSignOut }) => {
         />
       )}
 
-      <TipsFooter isOpenTabsView={isOpenTabsView} />
+      <TipsFooter  />
       <HomeBottomNavigationBar view={view} setView={setView} />
       <Snackbar
         open={toast.show}

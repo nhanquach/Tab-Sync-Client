@@ -19,7 +19,7 @@ import { isMobileApp } from "../utils/isMobile";
 
 type Props = {};
 
-const QRCodeDialog = (props: Props) => {
+const QRCodeDialog: React.FC<Props> = () => {
   const isMobile = isMobileApp();
   const [showModal, setShowModal] = useState(false);
 
