@@ -1,4 +1,3 @@
-// @ts-ignore
 import { SupabaseClient, createClient } from "@supabase/supabase-js";
 
 import { TABLES } from "./constants";
@@ -13,6 +12,8 @@ const rootClient = createClient(
 );
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let client: SupabaseClient<any, "public", any> | null;
+
+console.log(import.meta.env);
 
 export const getClient = async () => {
   try {
